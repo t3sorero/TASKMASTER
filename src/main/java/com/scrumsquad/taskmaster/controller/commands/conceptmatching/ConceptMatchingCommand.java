@@ -1,6 +1,9 @@
-package com.scrumsquad.taskmaster.controller.commands;
+package com.scrumsquad.taskmaster.controller.commands.conceptmatching;
 
-import com.scrumsquad.taskmaster.services.ConceptMatchingService;
+import com.scrumsquad.taskmaster.controller.commands.Command;
+import com.scrumsquad.taskmaster.controller.commands.CommandName;
+import com.scrumsquad.taskmaster.controller.commands.Context;
+import com.scrumsquad.taskmaster.services.conceptmaching.ConceptMatchingService;
 
 import java.util.Map;
 
