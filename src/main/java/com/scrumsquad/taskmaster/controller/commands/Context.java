@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Context {
-    private final String commandName;
+    private String commandName;
     private final Map<String, Object> arguments;
 
     public Context(String commandName) throws IllegalArgumentException {
@@ -24,4 +24,11 @@ public class Context {
     public String getCommandName() {
         return commandName;
     }
+    public void setCommandName(String commandName) {
+        this.commandName = commandName;
+    }
+    public void setArgument(String key, Object value) {
+        arguments.put(key, value);
+    }
+
 }

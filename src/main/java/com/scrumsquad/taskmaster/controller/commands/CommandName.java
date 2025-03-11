@@ -11,4 +11,7 @@ public class CommandName {
     public static final String register = "register";
     public static final String registerOk = "registerOk";
     public static final String registerKo = "registerKo";
+
+    // Nuevo comando para el juego de relación de conceptos
+    public static final String conceptMatching = "conceptMatching";
 }
