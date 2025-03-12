@@ -43,7 +43,25 @@ public class DefinicionesDAOImp implements DefinicionesDAO {
 
     @Override
     public List<DefinicionesDTO> getDefinicionesByConcepto(int conceptoId) {
-        return List.of();
+        List<DefinicionesDTO> defList = new ArrayList<>();
+        String query = "SELECT * FROM definiciones WHERE n_concepto = ?";
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, conceptoId);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                defList.add(new DefinicionesDTO(rs.getInt("id"), rs.getString("definicion"), rs.getInt("n_concepto")));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            defList = null;
+        } finally {
+            try { if(con != null) con.close(); } catch (SQLException ignored) {}
+        }
+        return defList;
     }
 
     @Override
@@ -74,5 +92,28 @@ public class DefinicionesDAOImp implements DefinicionesDAO {
             } catch (SQLException ignored) {}
         }
         return matchList;
+    }
+
+    @Override
+    public DefinicionesDTO getDefinicionById(int id) {
+        DefinicionesDTO definicion = null;
+        String query = "SELECT * FROM definiciones WHERE id = ?";
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                definicion = new DefinicionesDTO(rs.getInt("id"), rs.getString("definicion"), rs.getInt("n_concepto"));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            definicion = null;
+        } finally {
+            try { if(con != null) con.close(); } catch (SQLException ignored) {}
+        }
+        return definicion;
     }
 }

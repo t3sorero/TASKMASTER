@@ -1,57 +1,45 @@
 package com.scrumsquad.taskmaster.DB.conceptmatching_concepts;
 
 import com.scrumsquad.taskmaster.DB.DBData;
-import com.scrumsquad.taskmaster.DB.conceptmatching_matches.DefinicionesDTO;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ConceptoDAOImp implements ConceptoDAO {
 
-    private boolean empoderado;
-
-
-    private Connection connectionEmpoderado() throws SQLException {
-
-        empoderado = false;
-
-        Connection conn = null;
-        /**
-         * TRANSACCIONES
-         * */
-        return DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
-    }
     @Override
     public List<ConceptoDTO> getConcepts(List<Integer> ids) {
 
         List<ConceptoDTO> matchList = new ArrayList<>();
 
-        String query= "SELECT * FROM concepto WHERE id = ANY(?)";
+        String query = "SELECT * FROM concepto WHERE id = ANY(?)";
 
+        Connection con = null;
         try {
-            Connection con = connectionEmpoderado();
-            if (!empoderado) {
-                query += " FOR UPDATE";
-            }
+            con = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
+
             PreparedStatement ps = con.prepareStatement(query);
 
             Array sqlArray = con.createArrayOf("integer", ids.toArray());
             ps.setArray(1, sqlArray);
             ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
-                matchList.add(new ConceptoDTO(rs.getInt("id"), rs.getString("nombre")));            }
+            while (rs.next()) {
+                matchList.add(new ConceptoDTO(rs.getInt("id"), rs.getString("nombre")));
+            }
             rs.close();
             ps.close();
 
-            if (empoderado) {
-                con.close();
-            }
-
         } catch (SQLException e) {
-            matchList= null;
+            matchList = null;
 
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ignored) {
+            }
         }
         return matchList;
     }
@@ -60,28 +48,58 @@ public class ConceptoDAOImp implements ConceptoDAO {
     public List<ConceptoDTO> getAllConceptos() {
         List<ConceptoDTO> matchList = new ArrayList<>();
 
-        String query= "SELECT * FROM concepto";
+        String query = "SELECT * FROM concepto";
 
+        Connection con = null;
         try {
-            Connection con = connectionEmpoderado();
-            if (!empoderado) {
-                query += " FOR UPDATE";
-            }
+            con = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
+
             PreparedStatement ps = con.prepareStatement(query);
             ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
-                matchList.add(new ConceptoDTO(rs.getInt("id"), rs.getString("nombre")));            }
+            while (rs.next()) {
+                matchList.add(new ConceptoDTO(rs.getInt("id"), rs.getString("nombre")));
+            }
             rs.close();
             ps.close();
 
-            if (empoderado) {
-                con.close();
-            }
-
         } catch (SQLException e) {
-            matchList= null;
+            matchList = null;
 
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ignored) {
+            }
         }
         return matchList;
+    }
+
+    @Override
+    public ConceptoDTO getConceptoById(Integer key) {
+
+        ConceptoDTO concepto = null;
+        String query = "SELECT * FROM concepto WHERE id = ?";
+        Connection con = null;
+        try {
+            con = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
+            PreparedStatement ps = con.prepareStatement(query);
+            ps.setInt(1, key);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                concepto = new ConceptoDTO(rs.getInt("id"), rs.getString("nombre"));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            concepto = null;
+        } finally {
+            try {
+                if (con != null) con.close();
+            } catch (SQLException ignored) {
+            }
+        }
+        return concepto;
     }
 }

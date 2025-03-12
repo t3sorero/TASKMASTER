@@ -9,4 +9,5 @@ public interface ConceptoDAO {
     public List<ConceptoDTO> getAllConceptos();
 
 
+    public ConceptoDTO getConceptoById(Integer key);
 }

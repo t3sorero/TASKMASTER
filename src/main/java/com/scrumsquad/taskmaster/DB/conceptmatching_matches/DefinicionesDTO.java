@@ -3,11 +3,11 @@ package com.scrumsquad.taskmaster.DB.conceptmatching_matches;
 import java.util.Objects;
 
 public class DefinicionesDTO {
-    private int id;
+    private Integer id;
     private String descripcion;
-    private int conceptoId;
+    private Integer conceptoId;
 
-    public DefinicionesDTO(int id, String definicion, int nConcepto) {
+    public DefinicionesDTO(Integer id, String definicion, Integer nConcepto) {
         this.id = id;
         this.descripcion = definicion;
         this.conceptoId = nConcepto;
@@ -17,7 +17,7 @@ public class DefinicionesDTO {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -33,7 +33,7 @@ public class DefinicionesDTO {
         return conceptoId;
     }
 
-    public void setConceptoId(int conceptoId) {
+    public void setConceptoId(Integer conceptoId) {
         this.conceptoId = conceptoId;
     }
 
@@ -41,7 +41,7 @@ public class DefinicionesDTO {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         DefinicionesDTO that = (DefinicionesDTO) o;
-        return id == that.id && conceptoId == that.conceptoId && Objects.equals(descripcion, that.descripcion);
+        return Objects.equals(id, that.id) && Objects.equals(conceptoId, that.conceptoId) && Objects.equals(descripcion, that.descripcion);
     }
 
     @Override

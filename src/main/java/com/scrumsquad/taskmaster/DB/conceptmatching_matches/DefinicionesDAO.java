@@ -10,4 +10,6 @@ public interface DefinicionesDAO {
     public List<DefinicionesDTO> getDefinicionesByConcepto(int conceptoId);
 
     public List<DefinicionesDTO> getAllDefiniciones();
+
+    public DefinicionesDTO getDefinicionById(int id);
 }

@@ -4,7 +4,6 @@ import com.scrumsquad.taskmaster.DB.DAOFactory;
 import com.scrumsquad.taskmaster.DB.conceptmatching_concepts.ConceptoDTO;
 import com.scrumsquad.taskmaster.DB.conceptmatching_matches.DefinicionesDTO;
 
-import java.security.SecureRandom;
 import java.util.*;
 
 public class ConceptMatchingService {
@@ -12,6 +11,7 @@ public class ConceptMatchingService {
     private static final int CONCEPTS = 4;
     private static final int DEFINITIONS = 6;
     private static ConceptMatchingService instance;
+    private ConceptosDefinicionesTOA currentGameData;
 
     private ConceptMatchingService() {
     }
@@ -51,13 +51,29 @@ public class ConceptMatchingService {
         for (int i = 0; i < Math.abs(CONCEPTS - DEFINITIONS); i++) {
             conceptosElegidos.removeLast();
         }
-        return new ConceptosDefinicionesTOA(conceptosElegidos, definicionesElegidas);
+
+        currentGameData = new ConceptosDefinicionesTOA(conceptosElegidos, definicionesElegidas);
+        return  currentGameData; //new ConceptosDefinicionesTOA(conceptosElegidos, definicionesElegidas);
     }
 
     /**
      * Verifica las respuestas enviadas por el usuario.
      */
-    public int[] checkAnswers(Map<String, String> userAnswers) {
-        return dao.validateAnswers(userAnswers);
+    public Map<Integer, Boolean> checkAnswers(Map<Integer, Integer> userAnswers) {
+
+        var daoDefiniciones = DAOFactory.getDefinicionesDAO();
+        var daoConceptos = DAOFactory.getConceptoDAO();
+        var results = new HashMap<Integer, Boolean>();
+        if (currentGameData != null) {
+            for (var concepto : currentGameData.getConceptos()) {
+                if (userAnswers.containsKey(concepto.getId())) {
+                    var definicion = daoDefiniciones.getDefinicionById(userAnswers.get(concepto.getId()));
+                    results.put(concepto.getId(), definicion != null && concepto.getId() == definicion.getConceptoId());
+                } else {
+                    results.put(concepto.getId(), false);
+                }
+            }
+        }
+        return results;
     }
 }
