@@ -6,6 +6,7 @@ import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptMatchingService;
 
 import java.util.Map;
+import java.util.Set;
 
 public class ConceptMatchingCommand implements Command {
     private final ConceptMatchingService conceptMatchingService;
@@ -24,9 +25,10 @@ public class ConceptMatchingCommand implements Command {
 
             // Obtener respuestas enviadas por el usuario
             Map<Integer, Integer> userAnswers = (Map<Integer, Integer>) context.getArguments().get("userAnswers");
+            Set<Integer> conceptsInd = (Set<Integer>) context.getArguments().get("conceptosId");
 
             // Validar respuestas con el servicio
-            Map<Integer, Boolean> results = conceptMatchingService.checkAnswers(userAnswers);
+            Map<Integer, Boolean> results = conceptMatchingService.checkAnswers(userAnswers, conceptsInd);
             // Crear un nuevo contexto con los resultados
             Context responseContext = new Context(CommandName.conceptMatchingOk);
             responseContext.setArgument("correctAnswers", results);

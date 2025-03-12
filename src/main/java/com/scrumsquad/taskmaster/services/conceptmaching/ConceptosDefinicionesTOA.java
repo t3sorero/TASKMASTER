@@ -1,7 +1,7 @@
 package com.scrumsquad.taskmaster.services.conceptmaching;
 
-import com.scrumsquad.taskmaster.DB.conceptmatching_concepts.ConceptoDTO;
-import com.scrumsquad.taskmaster.DB.conceptmatching_matches.DefinicionesDTO;
+import com.scrumsquad.taskmaster.database.conceptmatching_concepts.ConceptoDTO;
+import com.scrumsquad.taskmaster.database.conceptmatching_matches.DefinicionesDTO;
 
 import java.util.List;
 import java.util.Objects;

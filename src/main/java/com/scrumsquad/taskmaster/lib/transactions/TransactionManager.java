@@ -1,10 +1,10 @@
-package com.scrumsquad.taskmaster.transactions;
+package com.scrumsquad.taskmaster.lib.transactions;
 
 public abstract class TransactionManager {
 
     private static TransactionManager instance;
 
-    public abstract Transaction nuevaTransaccion() throws Exception;
+    public abstract Transaction nuevaTransaccion();
 
     public abstract Transaction getTransaccion() throws Exception;
 

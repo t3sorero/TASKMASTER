@@ -19,4 +19,9 @@ public class CommandName {
     public static final String conceptMatchingGetData = "conceptMatchingGetData";
     public static final String conceptMatchingGetDataOk = "conceptMatchingGetDataOk";
     public static final String conceptMatchingGetDataKo = "conceptMatchingGetDataKo";
+    public static final String conceptMatchingCheckUserAnswer = "conceptMatchingCheckUserAnswer";
+    public static final String conceptMatchingCheckUserAnswerOk = "conceptMatchingCheckUserAnswerOk";
+    public static final String conceptMatchingCheckUserAnswerKo = "conceptMatchingCheckUserAnswerKo";
+
+
 }

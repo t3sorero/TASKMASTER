@@ -1,6 +1,7 @@
-package com.scrumsquad.taskmaster.transactions;
+package com.scrumsquad.taskmaster.lib.transactions;
 
-import com.scrumsquad.taskmaster.DB.DBData;
+import com.scrumsquad.taskmaster.database.DBData;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -10,7 +11,7 @@ public class TransactionImp implements Transaction {
 
     public void commit() throws Exception {
 
-        if(connection==null) return;
+        if (connection == null) return;
         try {
             connection.commit();
             connection.close();
@@ -23,25 +24,25 @@ public class TransactionImp implements Transaction {
 
     public void start() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
             connection.setAutoCommit(false);
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
     public void rollback() {
         // begin-user-code
-        if(connection==null) return;
+        if (connection == null) return;
         try {
             connection.rollback();
             connection.close();
             TransactionManager.getInstance().eliminaTransaccion();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        // end-user-code
     }
 
     public Object getResource() {

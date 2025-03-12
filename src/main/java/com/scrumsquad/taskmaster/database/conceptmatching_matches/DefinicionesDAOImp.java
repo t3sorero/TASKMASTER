@@ -1,10 +1,9 @@
-package com.scrumsquad.taskmaster.DB.conceptmatching_matches;
+package com.scrumsquad.taskmaster.database.conceptmatching_matches;
 
-import com.scrumsquad.taskmaster.DB.DBData;
+import com.scrumsquad.taskmaster.database.DBData;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class DefinicionesDAOImp implements DefinicionesDAO {

@@ -1,6 +1,6 @@
-package com.scrumsquad.taskmaster.DB.conceptmatching_concepts;
+package com.scrumsquad.taskmaster.database.conceptmatching_concepts;
 
-import com.scrumsquad.taskmaster.DB.DBData;
+import com.scrumsquad.taskmaster.database.DBData;
 
 import java.sql.*;
 import java.util.ArrayList;

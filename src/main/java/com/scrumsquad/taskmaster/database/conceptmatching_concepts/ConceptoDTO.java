@@ -1,4 +1,4 @@
-package com.scrumsquad.taskmaster.DB.conceptmatching_concepts;
+package com.scrumsquad.taskmaster.database.conceptmatching_concepts;
 
 import java.util.Objects;
 

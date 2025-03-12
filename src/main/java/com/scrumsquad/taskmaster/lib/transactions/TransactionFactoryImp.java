@@ -1,4 +1,4 @@
-package com.scrumsquad.taskmaster.transactions;
+package com.scrumsquad.taskmaster.lib.transactions;
 
 public class TransactionFactoryImp extends TransactionFactory {
 
