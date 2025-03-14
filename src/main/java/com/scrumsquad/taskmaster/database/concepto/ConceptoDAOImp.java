@@ -1,6 +1,8 @@
-package com.scrumsquad.taskmaster.database.conceptmatching_concepts;
+package com.scrumsquad.taskmaster.database.concepto;
 
 import com.scrumsquad.taskmaster.database.DBData;
+import com.scrumsquad.taskmaster.lib.transactions.Transaction;
+import com.scrumsquad.taskmaster.lib.transactions.TransactionManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -45,34 +47,20 @@ public class ConceptoDAOImp implements ConceptoDAO {
     }
 
     @Override
-    public List<ConceptoDTO> getAllConceptos() {
+    public List<ConceptoDTO> getAllConceptos() throws Exception {
         List<ConceptoDTO> matchList = new ArrayList<>();
-
         String query = "SELECT * FROM concepto";
-
-        Connection con = null;
-        try {
-            con = DriverManager.getConnection(DBData.DB_URL, DBData.DB_USER, DBData.DB_PASSWORD);
-
-            PreparedStatement ps = con.prepareStatement(query);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                matchList.add(new ConceptoDTO(rs.getInt("id"), rs.getString("nombre")));
-            }
-            rs.close();
-            ps.close();
-
-        } catch (SQLException e) {
-            matchList = null;
-
-        } finally {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ignored) {
-            }
+        Transaction transaction = TransactionManager.getInstance().getTransaccion();
+        Connection con = transaction.getResource();
+        PreparedStatement ps = con.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            matchList.add(new ConceptoDTO(
+                    rs.getInt("id"),
+                    rs.getString("nombre")));
         }
+        rs.close();
+        ps.close();
         return matchList;
     }
 

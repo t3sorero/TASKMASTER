@@ -12,16 +12,13 @@ public class CommandName {
     public static final String registerOk = "registerOk";
     public static final String registerKo = "registerKo";
 
-    // Nuevo comando para el juego de relación de conceptos
-    public static final String conceptMatching = "conceptMatching";
-    public static final String conceptMatchingOk = "conceptMatchingOk";
-    public static final String conceptMatchingKo = "conceptMatchingKo";
     public static final String conceptMatchingGetData = "conceptMatchingGetData";
     public static final String conceptMatchingGetDataOk = "conceptMatchingGetDataOk";
     public static final String conceptMatchingGetDataKo = "conceptMatchingGetDataKo";
-    public static final String conceptMatchingCheckUserAnswer = "conceptMatchingCheckUserAnswer";
-    public static final String conceptMatchingCheckUserAnswerOk = "conceptMatchingCheckUserAnswerOk";
-    public static final String conceptMatchingCheckUserAnswerKo = "conceptMatchingCheckUserAnswerKo";
+
+    public static final String conceptMatchingCheckAnswer = "conceptMatchingCheckAnswer";
+    public static final String conceptMatchingCheckAnswerOk = "conceptMatchingCheckAnswerOk";
+    public static final String conceptMatchingCheckAnswerKo = "conceptMatchingCheckAnswerKo";
 
 
 }

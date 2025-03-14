@@ -2,6 +2,8 @@ package com.scrumsquad.taskmaster.lib.transactions;
 
 //import java.sql.SQLException;
 
+import java.sql.Connection;
+
 public interface Transaction {
 
     public void commit() throws Exception;
@@ -10,5 +12,5 @@ public interface Transaction {
 
     public void rollback();
 
-    public Object getResource();
+    public Connection getResource();
 }

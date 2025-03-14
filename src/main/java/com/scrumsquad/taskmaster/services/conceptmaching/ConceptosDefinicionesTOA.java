@@ -1,7 +1,7 @@
 package com.scrumsquad.taskmaster.services.conceptmaching;
 
-import com.scrumsquad.taskmaster.database.conceptmatching_concepts.ConceptoDTO;
-import com.scrumsquad.taskmaster.database.conceptmatching_matches.DefinicionesDTO;
+import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
+import com.scrumsquad.taskmaster.database.definicion.DefinicionDTO;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,9 +10,9 @@ public class ConceptosDefinicionesTOA {
 
     private List<ConceptoDTO> conceptos;
 
-    private List<DefinicionesDTO> definiciones;
+    private List<DefinicionDTO> definiciones;
 
-    public ConceptosDefinicionesTOA(List<ConceptoDTO> conceptos, List<DefinicionesDTO> definiciones) {
+    public ConceptosDefinicionesTOA(List<ConceptoDTO> conceptos, List<DefinicionDTO> definiciones) {
         this.conceptos = conceptos;
         this.definiciones = definiciones;
     }
@@ -21,7 +21,7 @@ public class ConceptosDefinicionesTOA {
         return conceptos;
     }
 
-    public List<DefinicionesDTO> getDefiniciones() {
+    public List<DefinicionDTO> getDefiniciones() {
         return definiciones;
     }
 
@@ -29,7 +29,7 @@ public class ConceptosDefinicionesTOA {
         this.conceptos = conceptos;
     }
 
-    public void setDefiniciones(List<DefinicionesDTO> definiciones) {
+    public void setDefiniciones(List<DefinicionDTO> definiciones) {
         this.definiciones = definiciones;
     }
 

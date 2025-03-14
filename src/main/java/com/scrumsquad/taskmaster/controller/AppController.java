@@ -98,6 +98,7 @@ public class AppController {
         public void pushView(View view, JPanel viewBuilt) {
             views.push(new RouteView(view, viewBuilt));
             framePanel.pushView(viewBuilt);
+            view.onLoad();
         }
 
         public void popView() {

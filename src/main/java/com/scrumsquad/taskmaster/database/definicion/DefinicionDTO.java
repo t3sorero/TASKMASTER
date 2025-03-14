@@ -1,13 +1,13 @@
-package com.scrumsquad.taskmaster.database.conceptmatching_matches;
+package com.scrumsquad.taskmaster.database.definicion;
 
 import java.util.Objects;
 
-public class DefinicionesDTO {
+public class DefinicionDTO {
     private Integer id;
     private String descripcion;
     private Integer conceptoId;
 
-    public DefinicionesDTO(Integer id, String definicion, Integer nConcepto) {
+    public DefinicionDTO(Integer id, String definicion, Integer nConcepto) {
         this.id = id;
         this.descripcion = definicion;
         this.conceptoId = nConcepto;
@@ -40,7 +40,7 @@ public class DefinicionesDTO {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        DefinicionesDTO that = (DefinicionesDTO) o;
+        DefinicionDTO that = (DefinicionDTO) o;
         return Objects.equals(id, that.id) && Objects.equals(conceptoId, that.conceptoId) && Objects.equals(descripcion, that.descripcion);
     }
 

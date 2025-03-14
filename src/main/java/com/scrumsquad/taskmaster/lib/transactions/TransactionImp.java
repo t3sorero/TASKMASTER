@@ -45,7 +45,7 @@ public class TransactionImp implements Transaction {
         }
     }
 
-    public Object getResource() {
+    public Connection getResource() {
         return connection;
     }
 }

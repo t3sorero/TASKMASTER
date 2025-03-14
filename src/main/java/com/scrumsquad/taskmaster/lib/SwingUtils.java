@@ -7,6 +7,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
 
 public class SwingUtils {
     private SwingUtils() {
@@ -42,6 +45,7 @@ public class SwingUtils {
 
     /**
      * Devuelve el color con un tono mas negro.
+     *
      * @param c
      * @param ratio [0, 1] cantidad a incrementar
      * @return
@@ -56,6 +60,7 @@ public class SwingUtils {
 
     /**
      * Devuelve el color con un tono mas blanco.
+     *
      * @param c
      * @param ratio [0, 1] cantidad a incrementar
      * @return
@@ -84,36 +89,82 @@ public class SwingUtils {
         return new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
     }
 
-    public static void drawStringWithLetterSpacing(Graphics2D g2d, Font font, String text, int width, int height, int letterSpacing) {
+    public static void drawStringWithLetterSpacing(Graphics2D g2d, String text, int width, int height, int letterSpacing) {
+        drawStringWithLetterSpacing(g2d, text, width, height, letterSpacing, new Point());
+    }
+
+    public static void drawStringWithLetterSpacing(Graphics2D g2d, String text, int width, int height, int letterSpacing, Point point) {
+        if (text == null || text.trim().isEmpty()) return;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        if (letterSpacing <= 0) {
-            FontMetrics metrics = g2d.getFontMetrics();
-            int textWidth = metrics.stringWidth(text);
-            int textHeight = metrics.getHeight();
-            int textAscent = metrics.getAscent();
-
-            // Compute center position
-            int x = (width - textWidth) / 2;
-            int y = (height - textHeight) / 2 + textAscent;
-
-            g2d.drawString(text, x, y);
+        FontMetrics metrics = g2d.getFontMetrics();
+        int spacing = Math.max(0, letterSpacing);
+        final String[] words = text.split(" ");
+        java.util.List<String> lines = new ArrayList<>();
+        java.util.List<Integer> linesWidth = new ArrayList<>();
+        String line = "";
+        for (String word : words) {
+            final String lineWithWord = line.isEmpty() ? word : line + ' ' + word;
+            int lineWithWordWidth = metrics.stringWidth(lineWithWord);
+            if (spacing > 0) {
+                lineWithWordWidth += letterSpacing * (lineWithWord.length() - 1);
+            }
+            if (lineWithWordWidth < width - 8) {
+                line = lineWithWord;
+            } else {
+                lines.add(line);
+                int lineWidth = metrics.stringWidth(line);
+                if (spacing > 0) {
+                    lineWidth += letterSpacing * (line.length() - 1);
+                }
+                linesWidth.add(lineWidth);
+                line = word;
+            }
         }
-        FontMetrics fm = g2d.getFontMetrics(font);
-
-        // Calculate total text width with letter spacing
-        int textWidth = 0;
-        for (char c : text.toCharArray()) {
-            textWidth += fm.charWidth(c) + letterSpacing;
+        lines.add(line);
+        int lineWidth = metrics.stringWidth(line);
+        if (spacing > 0) {
+            lineWidth += letterSpacing * (line.length() - 1);
         }
-        textWidth -= letterSpacing; // Remove extra spacing after the last character
-
-        int x = (width - textWidth) / 2; // Center horizontally
-        int y = (height + fm.getAscent() - fm.getDescent()) / 2; // Center vertically
-
-        // Draw each character with spacing
-        for (char c : text.toCharArray()) {
-            g2d.drawString(String.valueOf(c), x, y);
-            x += fm.charWidth(c) + letterSpacing; // Move to the next character position
+        linesWidth.add(lineWidth);
+        int textHeight = metrics.getHeight();
+        int imageHeight = Math.min(height, lines.size() * textHeight);
+        boolean done = false;
+        int linesPainted = 0;
+        int y = (height - imageHeight) / 2;
+        final int maxHeight = y + imageHeight;
+        int textAscent = metrics.getAscent();
+        for (; linesPainted < lines.size() && !done; linesPainted++) {
+            String l = lines.get(linesPainted);
+            int x = (width - linesWidth.get(linesPainted)) / 2 + Math.max(point.x, 0);
+            if (y - textHeight > maxHeight) {
+                done = true;
+            } else if (spacing == 0) {
+                // Draw string
+                g2d.drawString(l, x, y + Math.max(point.y, 0) + textAscent);
+            } else {
+                // Draw each character with spacing
+                for (char c : text.toCharArray()) {
+                    g2d.drawString(String.valueOf(c), x, y + Math.max(point.y, 0) + textAscent);
+                    x += metrics.charWidth(c) + letterSpacing; // Move to the next character position
+                }
+            }
+            y += textHeight;
         }
+    }
+
+    public static GridBagConstraints horizontalConstraints() {
+        GridBagConstraints horizontalConstraints = new GridBagConstraints();
+        horizontalConstraints.gridx = GridBagConstraints.RELATIVE;
+        horizontalConstraints.gridy = 0;
+        horizontalConstraints.fill = GridBagConstraints.VERTICAL;
+        return horizontalConstraints;
+    }
+
+    public static GridBagConstraints verticalConstraints() {
+        GridBagConstraints verticalConstraints = new GridBagConstraints();
+        verticalConstraints.gridx = 0;
+        verticalConstraints.gridy = GridBagConstraints.RELATIVE;
+        verticalConstraints.fill = GridBagConstraints.HORIZONTAL;
+        return verticalConstraints;
     }
 }

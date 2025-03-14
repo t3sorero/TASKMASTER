@@ -27,6 +27,9 @@ public abstract class View extends Widget {
         return true;
     }
 
+    public void onLoad() {
+    }
+
     public static class ViewOptions {
         private String headerTitle;
         private Color headerColor;

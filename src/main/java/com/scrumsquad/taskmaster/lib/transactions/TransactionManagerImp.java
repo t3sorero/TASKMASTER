@@ -4,17 +4,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TransactionManagerImp extends TransactionManager {
 
-    private ConcurrentHashMap<Thread, Transaction> map;
+    private final ConcurrentHashMap<Thread, Transaction> map;
 
     public TransactionManagerImp() {
-        map = new ConcurrentHashMap<Thread, Transaction>();
+        map = new ConcurrentHashMap<>();
     }
 
     public Transaction nuevaTransaccion()  {
-        Transaction transaction = TransactionFactory.getInstance().newTransaction();
         if (map.contains(Thread.currentThread())) {
             throw new RuntimeException("Ya hay un hilo con una transaccion en curso");
         }
+        Transaction transaction = TransactionFactory.getInstance().newTransaction();
 
         map.put(Thread.currentThread(), transaction);
 

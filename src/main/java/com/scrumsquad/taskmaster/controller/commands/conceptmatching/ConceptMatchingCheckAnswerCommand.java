@@ -9,20 +9,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ConceptMachingCheckAnswerCommand implements Command {
+public class ConceptMatchingCheckAnswerCommand implements Command {
     @Override
     public Context execute(Context ctx) {
 
 
         try {
             var userAnswer = ctx.getArguments();
-            Map<Integer, Boolean> feedback = ConceptMatchingService.getInstance().checkAnswers((Map<Integer, Integer>) userAnswer.get("userAnswers"), (Set<Integer>) userAnswer.get("correctAnswers"));
+            if (!userAnswer.containsKey("userAnswers")) {
+                throw new Exception();
+            }
+            if (!userAnswer.containsKey("conceptosIds")) {
+                throw new Exception();
+            }
+            Map<Integer, Boolean> feedback = ConceptMatchingService.getInstance().checkAnswers(
+                    (Map<Integer, Integer>) userAnswer.get("userAnswers"),
+                    (Set<Integer>) userAnswer.get("conceptosIds"));
             var res = new HashMap<String, Object>();
             res.put("feedback", feedback);
-            return new Context(CommandName.conceptMatchingCheckUserAnswerOk, res);
+            return new Context(CommandName.conceptMatchingCheckAnswerOk, res);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Context(CommandName.conceptMatchingCheckUserAnswerKo);
+            return new Context(CommandName.conceptMatchingCheckAnswerKo);
 
         }
     }

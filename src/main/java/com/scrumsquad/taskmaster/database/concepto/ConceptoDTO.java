@@ -1,4 +1,4 @@
-package com.scrumsquad.taskmaster.database.conceptmatching_concepts;
+package com.scrumsquad.taskmaster.database.concepto;
 
 import java.util.Objects;
 
@@ -6,7 +6,7 @@ public class ConceptoDTO {
     private Integer id;
     private String nombre;
 
-    public ConceptoDTO(int Integer, String nombre) {
+    public ConceptoDTO(int id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }

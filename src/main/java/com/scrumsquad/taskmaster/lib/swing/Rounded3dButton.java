@@ -3,26 +3,43 @@ package com.scrumsquad.taskmaster.lib.swing;
 import com.scrumsquad.taskmaster.lib.SwingUtils;
 
 import javax.swing.*;
-import javax.swing.border.StrokeBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class RoundedButton extends JButton {
+public class Rounded3dButton extends JButton {
 
-    private static final int letterSpacing = 2;
     private static final Dimension minimumEmptySize = new Dimension(2, 2);
+    private static final int buttonSideHeight = 8;
 
+    private final int borderRadius;
     private boolean hover;
     private boolean pressed;
     private boolean focus;
 
-    public RoundedButton(String text) {
+    public int getLetterSpacing() {
+        return letterSpacing;
+    }
+
+    public void setLetterSpacing(int letterSpacing) {
+        this.letterSpacing = letterSpacing;
+    }
+
+    private int letterSpacing = 2;
+
+    public Rounded3dButton(String text) {
+        this(text, 8);
+    }
+
+    public Rounded3dButton(String text, int borderRadius) {
+        this.borderRadius = borderRadius;
         setText(text);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setContentAreaFilled(false);
         setFocusPainted(false);
-        setOpaque(false);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -59,6 +76,7 @@ public class RoundedButton extends JButton {
                 focus = false;
             }
         });
+        setBorder(SwingUtils.emptyBorder(24, 16));
         // Set button dimension
         if (text != null && !text.isEmpty()) {
             final Dimension dim = getMinimumDimension(text);
@@ -68,7 +86,6 @@ public class RoundedButton extends JButton {
             setMinimumSize(minimumEmptySize);
             setSize(minimumEmptySize);
         }
-        setBorder(SwingUtils.emptyBorder(8));
     }
 
     private Dimension getMinimumDimension(String text) {
@@ -78,6 +95,11 @@ public class RoundedButton extends JButton {
         int textWidth = metrics.stringWidth(text) + (text.length() - 1) * letterSpacing;
         int textHeight = metrics.getHeight();
         g.dispose();
+        if (getBorder() != null) {
+            Insets insets = getBorder().getBorderInsets(this);
+            textWidth += insets.left + insets.right;
+            textHeight += insets.top + insets.bottom;
+        }
         return new Dimension(textWidth, textHeight);
     }
 
@@ -86,7 +108,8 @@ public class RoundedButton extends JButton {
         super.setText(text);
         // Update minimum dimension
         if (text != null && !text.isEmpty()) {
-            setMinimumSize(getMinimumDimension(text));
+            final Dimension dim = getMinimumDimension(text);
+            setMinimumSize(dim);
         } else {
             setMinimumSize(minimumEmptySize);
         }
@@ -110,7 +133,7 @@ public class RoundedButton extends JButton {
         final int w = getWidth();
         final int h = getHeight();
         Color bg = getBackground();
-        Color bgDarker, bgLighter;
+        Color bgDarker, bgLighter, bgSide;
 
         float bgRatio = 0.125f; // 1/8
         final float opacity = 0.8f; // 80%
@@ -118,43 +141,41 @@ public class RoundedButton extends JButton {
             bgDarker = SwingUtils.withAlpha(SwingUtils.blackerColor(bg, bgRatio), opacity);
             bgLighter = SwingUtils.withAlpha(SwingUtils.whiterColor(bg, bgRatio), opacity);
             bg = SwingUtils.withAlpha(bg, opacity);
-        } else if (pressed) {
-            bgDarker = bg;
-            bg = SwingUtils.blackerColor(bg, bgRatio);
-            bgLighter = SwingUtils.blackerColor(bg, bgRatio);
-        } else if (hover) {
+            bgSide = SwingUtils.withAlpha(SwingUtils.blackerColor(bgDarker, bgRatio), opacity);
+        } else if (hover || pressed) {
             bgDarker = bg;
             bg = SwingUtils.whiterColor(bg, bgRatio);
             bgLighter = SwingUtils.whiterColor(bg, bgRatio);
+            bgSide = SwingUtils.blackerColor(bgDarker, bgRatio);
         } else {
             bgDarker = SwingUtils.blackerColor(bg, bgRatio);
             bgLighter = SwingUtils.whiterColor(bg, bgRatio);
+            bgSide = SwingUtils.blackerColor(bgDarker, bgRatio);
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        int cornersRounding = Math.min(Math.max(w, h) / 2, Math.min(w, h));
+        int cornersRounding = borderRadius * 2;
+        final int sideHeight = Math.min(Math.max(2, h / 4), buttonSideHeight);
+        final int addedY = pressed ? sideHeight : 0;
+        if (!pressed) {
+            g2d.setColor(bgSide);
+            g2d.fillRoundRect(0, sideHeight, w - 1, h - 1 - sideHeight, cornersRounding, cornersRounding);
+        }
         LinearGradientPaint gp = new LinearGradientPaint(0, 0, 0, h,
                 new float[]{0f, .4f, .6f, 1f}, new Color[]{bgLighter, bg, bg, bgDarker});
         g2d.setPaint(gp);
-        g2d.fillRoundRect(0, 0, w - 1, h - 1, cornersRounding, cornersRounding);
-        if (focus) {
-            g2d.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2d.setColor(SwingUtils.whiterColor(getBackground(), 0.75f));
-            g2d.drawRoundRect(2, 2, w - 5, h - 5, cornersRounding, cornersRounding);
-        }
+        g2d.fillRoundRect(0, addedY, w - 1, h - 1 - sideHeight, cornersRounding, cornersRounding);
         g2d.setColor(getForeground());
         g2d.setStroke(new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2d.drawRoundRect(0, 0, w - 1, h - 1, cornersRounding, cornersRounding);
+        if (!pressed) {
+            g2d.drawRoundRect(0, 0, w - 1, h - 1, cornersRounding, cornersRounding);
+        }
+        g2d.drawRoundRect(0, addedY, w - 1, h - 1 - sideHeight, cornersRounding, cornersRounding);
         if (getText() != null && !getText().isEmpty()) {
-            if (isEnabled()) {
-                g2d.setColor(getForeground());
-            } else {
-                g2d.setColor(SwingUtils.withAlpha(getForeground(), opacity));
-            }
-            final String text = getText();
+            g2d.setColor(isEnabled() ? getForeground() : SwingUtils.withAlpha(getForeground(), opacity));
             g2d.setPaint(null);
             g2d.setFont(getFont());
-            SwingUtils.drawStringWithLetterSpacing(g2d, text, w, h, letterSpacing);
+            SwingUtils.drawStringWithLetterSpacing(g2d, getText(), w, h - sideHeight, letterSpacing, new Point(0, addedY));
         }
         g2d.dispose();
     }

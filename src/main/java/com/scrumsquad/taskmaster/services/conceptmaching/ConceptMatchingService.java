@@ -1,8 +1,8 @@
 package com.scrumsquad.taskmaster.services.conceptmaching;
 
 import com.scrumsquad.taskmaster.database.DAOFactory;
-import com.scrumsquad.taskmaster.database.conceptmatching_concepts.ConceptoDTO;
-import com.scrumsquad.taskmaster.database.conceptmatching_matches.DefinicionesDTO;
+import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
+import com.scrumsquad.taskmaster.database.definicion.DefinicionDTO;
 import com.scrumsquad.taskmaster.lib.transactions.Transaction;
 import com.scrumsquad.taskmaster.lib.transactions.TransactionManager;
 
@@ -17,19 +17,12 @@ public class ConceptMatchingService {
     private ConceptMatchingService() {
     }
 
-    public static ConceptMatchingService getInstance() {
+    public static synchronized ConceptMatchingService getInstance() {
         if (instance == null) {
             instance = new ConceptMatchingService();
         }
         return instance;
     }
-
-    private Transaction inicioTransaccion(){
-        Transaction t = TransactionManager.getInstance().nuevaTransaccion();
-        t.start();
-        return t;
-    }
-
 
     /**
      * Obtiene los conceptos y definiciones desde la base de datos.
@@ -45,7 +38,7 @@ public class ConceptMatchingService {
             var conceptos = daoConceptos.getAllConceptos();
 
             List<ConceptoDTO> conceptosElegidos = new ArrayList<>();
-            List<DefinicionesDTO> definicionesElegidas = new ArrayList<>();
+            List<DefinicionDTO> definicionesElegidas = new ArrayList<>();
             Set<Integer> conceptosIds = new HashSet<>();
             for (int i = 0; i < DEFINITIONS; i++) {
                 int random;
@@ -59,9 +52,7 @@ public class ConceptMatchingService {
                 random = (int) (Math.random() * definiciones.size());
                 definicionesElegidas.add(definiciones.get(random));
             }
-            for (int i = 0; i < Math.abs(CONCEPTS - DEFINITIONS); i++) {
-                conceptosElegidos.removeLast();
-            }
+            conceptosElegidos = conceptosElegidos.subList(0, CONCEPTS);
             Collections.shuffle(definicionesElegidas);
             t.commit();
             return new ConceptosDefinicionesTOA(conceptosElegidos, definicionesElegidas);
@@ -76,7 +67,6 @@ public class ConceptMatchingService {
      * Verifica las respuestas enviadas por el usuario.
      */
     public Map<Integer, Boolean> checkAnswers(Map<Integer, Integer> userAnswers, Set<Integer> conceptosIds) throws Exception {
-
         Transaction t = TransactionManager.getInstance().nuevaTransaccion();
         try{
             t.start();
@@ -91,8 +81,6 @@ public class ConceptMatchingService {
                         results.put(index, false);
                     }
                 }
-            } else {
-                results.forEach((k, v) -> results.put(conceptosIds.iterator().next(), false));
             }
             t.commit();
             return results;

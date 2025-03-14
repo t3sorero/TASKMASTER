@@ -13,6 +13,7 @@ public class ImagePanel extends JPanel {
     private BufferedImage image;
 
     public ImagePanel(String path) {
+        setOpaque(false);
         image = ResourceLoader.loadImage(path);
         if (image != null && (image.getWidth() == 0 || image.getHeight() == 0)) {
             image = null;

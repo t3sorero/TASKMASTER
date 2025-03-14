@@ -25,7 +25,6 @@ public class CommonUtils {
      */
     public static Color calculateTextColor(Color c) {
         float[] hsl = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-        System.out.println(Arrays.toString(hsl));
         if (hsl[2] < .6) return Color.white;
         return Color.black;
     }

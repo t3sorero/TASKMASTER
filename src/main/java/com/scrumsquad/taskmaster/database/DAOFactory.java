@@ -1,8 +1,8 @@
 package com.scrumsquad.taskmaster.database;
 
-import com.scrumsquad.taskmaster.database.conceptmatching_concepts.ConceptoDAO;
-import com.scrumsquad.taskmaster.database.conceptmatching_concepts.ConceptoDAOImp;
-import com.scrumsquad.taskmaster.database.conceptmatching_matches.DefinicionesDAOImp;
+import com.scrumsquad.taskmaster.database.concepto.ConceptoDAO;
+import com.scrumsquad.taskmaster.database.concepto.ConceptoDAOImp;
+import com.scrumsquad.taskmaster.database.definicion.DefinicionDAOImp;
 
 public class DAOFactory {
 
@@ -12,8 +12,8 @@ public class DAOFactory {
         return new ConceptoDAOImp();
     }
 
-    public static DefinicionesDAOImp getDefinicionesDAO() {
-        return new DefinicionesDAOImp();
+    public static DefinicionDAOImp getDefinicionesDAO() {
+        return new DefinicionDAOImp();
     }
 
 }

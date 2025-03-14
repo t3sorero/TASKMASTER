@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
 
-    private static final String firstRoute = ViewRoutes.login;
+    private static final String firstRoute = ViewRoutes.conceptMatching;
 
     private static final String[] imagesToPreload = {
             "/images/back-icon-white.png",
@@ -40,9 +40,9 @@ public class Main {
             ex.printStackTrace();
         }
         SwingUtilities.invokeLater(() -> {
-            new ResourcePreLoaderFrame(() -> {
+            //new ResourcePreLoaderFrame(() -> {
                 AppController.getInstance().openFrame(firstRoute, "TaskMaster");
-            });
+            //});
         });
     }
 
