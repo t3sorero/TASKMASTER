@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  # Se ejecutara cuando se haga push
+  push:
+
+  # Ajuste que puso por defecto github par aejecutarlo manualmente desde actions
+  workflow_dispatch:
+
+# Lo que lleva a cabo la integracion continua
+jobs:
+  # Este workflow tiene solo un job "tests"
+  test:
+    # En donde corre
+    runs-on: ubuntu-latest
+
+    # Los pasos que da
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'oracle'
+          cache: maven
+
+      - name: Ejecutar pruebas específicas con Maven
+        run: mvn -Dtest=ConceptMatchingCheckAnswerCommandTest,\
+          ConceptMatchingGetDataCommandTest,\
+          ConceptMatchingServiceTest,\
+          ConceptoDTOTest,\
+          ConceptosDefinicionesTOATest,\
+          DefinicionDTOTest test
