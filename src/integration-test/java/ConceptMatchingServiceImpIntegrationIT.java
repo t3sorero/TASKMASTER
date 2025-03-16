@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mockStatic;
 
-class ConceptMatchingServiceImpIntegrationTest {
+class ConceptMatchingServiceImpIntegrationIT {
 
 
     @BeforeEach
