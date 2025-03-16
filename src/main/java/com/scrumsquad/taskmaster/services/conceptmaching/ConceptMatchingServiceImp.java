@@ -23,6 +23,11 @@ public class ConceptMatchingServiceImp extends ConceptMatchingService {
 
             var conceptos = daoConceptos.getAllConceptos();
 
+            if (conceptos.isEmpty()) {
+                t.commit();
+                return new ConceptosDefinicionesTOA(Collections.emptyList(), Collections.emptyList());
+            }
+
             List<ConceptoDTO> conceptosElegidos = new ArrayList<>();
             List<DefinicionDTO> definicionesElegidas = new ArrayList<>();
             Set<Integer> conceptosIds = new HashSet<>();
