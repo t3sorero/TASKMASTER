@@ -11,7 +11,7 @@ public class TransactionManagerImp extends TransactionManager {
     }
 
     public Transaction nuevaTransaccion()  {
-        if (map.contains(Thread.currentThread())) {
+        if (map.containsKey(Thread.currentThread())) {
             throw new RuntimeException("Ya hay un hilo con una transaccion en curso");
         }
         Transaction transaction = TransactionFactory.getInstance().newTransaction();

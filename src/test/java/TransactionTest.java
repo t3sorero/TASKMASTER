@@ -25,7 +25,7 @@ public class TransactionTest {
     void setUp() {
         transaction = spy(new TransactionImp());
         con = mock(Connection.class);
-        doReturn(con).when(transaction).getResource();
+        lenient().doReturn(con).when(transaction).getResource();
     }
 
     @Test

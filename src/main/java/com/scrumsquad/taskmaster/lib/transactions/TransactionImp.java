@@ -9,16 +9,17 @@ public class TransactionImp implements Transaction {
 
     private Connection connection;
 
-    public void commit() throws Exception {
+    public void commit() {
 
-        if (connection == null) return;
+        Connection con = getResource();
+        if (con == null) return;
         try {
-            connection.commit();
-            connection.close();
+            con.commit();
+            con.close();
             TransactionManager.getInstance().eliminaTransaccion();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -33,11 +34,11 @@ public class TransactionImp implements Transaction {
     }
 
     public void rollback() {
-        // begin-user-code
-        if (connection == null) return;
+        Connection con = getResource();
+        if (con == null) return;
         try {
-            connection.rollback();
-            connection.close();
+            con.rollback();
+            con.close();
             TransactionManager.getInstance().eliminaTransaccion();
         } catch (Exception e) {
             e.printStackTrace();
