@@ -1,4 +1,5 @@
 import com.scrumsquad.taskmaster.database.DBData;
+import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptMatchingService;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptMatchingServiceImp;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
@@ -19,6 +20,13 @@ class ConceptMatchingServiceImpIntegrationTest {
         ConceptMatchingService conceptMatchingService = new ConceptMatchingServiceImp();
         ConceptosDefinicionesTOA result = conceptMatchingService.getGameData();
 
+        for(ConceptoDTO c: result.getConceptos()){
+            int i = 0;
+            while(i < result.getDefiniciones().size() && result.getDefiniciones().get(i).getConceptoId() != c.getId()){
+                i++;
+            }
+            assertTrue(i < result.getDefiniciones().size());
+        }
         // Verificar que los conceptos y definiciones fueron obtenidos correctamente
         assertNotNull(result, "El resultado no debe ser nulo");
         assertFalse(result.getConceptos().isEmpty(), "Debe devolver al menos un concepto");
@@ -57,5 +65,5 @@ class ConceptMatchingServiceImpIntegrationTest {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
+    }
 }
