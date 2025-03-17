@@ -132,4 +132,33 @@
         </plugins>
     </build>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- Sección para la generación del sitio (reportes) -->
+    <reporting>
+        <plugins>
+            <!-- Reporte de pruebas unitarias -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>
