@@ -5,14 +5,8 @@ import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDTO;
-import com.scrumsquad.taskmaster.lib.CommonUtils;
-import com.scrumsquad.taskmaster.lib.FontUtils;
-import com.scrumsquad.taskmaster.lib.SwingUtils;
-import com.scrumsquad.taskmaster.lib.View;
-import com.scrumsquad.taskmaster.lib.swing.ImagePanel;
-import com.scrumsquad.taskmaster.lib.swing.Rounded3dButton;
-import com.scrumsquad.taskmaster.lib.swing.RoundedButton;
-import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
+import com.scrumsquad.taskmaster.lib.*;
+import com.scrumsquad.taskmaster.lib.swing.*;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.AppColors;
 
@@ -50,6 +44,9 @@ public class ConceptMatchingView extends View {
 
     private JPanel actionButtonsPanel;
     private JButton sendButton;
+    private JButton retryButton;
+    private JButton exitButton;
+    private final String retryButtonPath = "/images/retry-icon.png";
 
     private Integer selectedConcepto = null;
     private Integer selectedDefinicion = null;
@@ -103,6 +100,9 @@ public class ConceptMatchingView extends View {
         sendButton.addActionListener((e) -> {
             if (toa == null) return;
             sendButton.setEnabled(false);
+            sendButton.setVisible(false);
+            retryButton.setVisible(true);
+            exitButton.setVisible(true);
             for (JButton button : conceptosButtons) {
                 button.setEnabled(false);
             }
@@ -125,6 +125,45 @@ public class ConceptMatchingView extends View {
             AppController.getInstance().action(ctx);
         });
         actionButtonsPanel.add(sendButton);
+
+        ImageIcon originalIcon = new ImageIcon(ResourceLoader.loadImage(retryButtonPath));
+        Image resizedImage = originalIcon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+        retryButton = new TransparentButton(resizedIcon,48,48);
+        retryButton.addActionListener((e) -> {
+            correctNumberLabel.setText("-");
+            incorrectNumberLabel.setText("-");
+            sendButton.setEnabled(true);
+            sendButton.setVisible(true);
+            retryButton.setVisible(false);
+            exitButton.setVisible(false);
+            for (JButton button : conceptosButtons) {
+                button.setEnabled(true);
+            }
+            for (JButton button : definicionesButtons) {
+                button.setEnabled(true);
+            }
+            conceptosGood.clear();
+            definicionesGood.clear();
+            conceptosBad.clear();
+            definicionesBad.clear();
+            onLoad();
+        });
+
+        retryButton.setVisible(false);
+        actionButtonsPanel.add(retryButton);
+
+        exitButton = new RoundedButton("EXIT");
+        exitButton.setFont(FontUtils.lato14);
+        exitButton.setBackground(AppColors.exit);
+        exitButton.setForeground(AppColors.primaryText);
+        exitButton.setBorder(SwingUtils.emptyBorder(64, 16));
+        exitButton.addActionListener((e) -> {
+            //de momento nada
+        });
+        exitButton.setVisible(false);
+        actionButtonsPanel.add(exitButton);
+
         bottomPanel.add(actionButtonsPanel, BorderLayout.EAST);
 
         gamePanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -186,14 +225,16 @@ public class ConceptMatchingView extends View {
                     index = i;
                 }
             }
-            if (index != -1 && conceptoMap.containsKey(index)) {
+            if (index != -1 ) {
                 if (entry.getValue()) {
                     conceptosGood.get(index).setVisible(true);
-                    definicionesGood.get(conceptoMap.get(index)).setVisible(true);
+                    if(conceptoMap.containsKey(index))
+                        definicionesGood.get(conceptoMap.get(index)).setVisible(true);
                     correct++;
                 } else {
                     conceptosBad.get(index).setVisible(true);
-                    definicionesBad.get(conceptoMap.get(index)).setVisible(true);
+                    if(conceptoMap.containsKey(index))
+                        definicionesBad.get(conceptoMap.get(index)).setVisible(true);
                     incorrect++;
                 }
             }

@@ -18,6 +18,7 @@ public class AppColors {
     public static final Color accent = new Color(0x5971EC);
 
     public static final Color error = new Color(0xed4337);
+    public static final Color exit = new Color(0xe30000);
 
     public static final Color primaryText = CommonUtils.calculateTextColor(AppColors.primary, AppColors.background, AppColors.text);
     public static final Color secondaryText = CommonUtils.calculateTextColor(AppColors.secondary, AppColors.background, AppColors.text);
