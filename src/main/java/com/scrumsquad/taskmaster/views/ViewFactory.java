@@ -5,6 +5,7 @@ import com.scrumsquad.taskmaster.views.auth.LoginView;
 import com.scrumsquad.taskmaster.views.auth.RegisterView;
 import com.scrumsquad.taskmaster.views.student.StudentView;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.ConceptMatchingView;
+import com.scrumsquad.taskmaster.views.student.games.conceptmatching.TopicsConceptMatchingView;
 
 public class ViewFactory {
     private ViewFactory() {
@@ -16,6 +17,7 @@ public class ViewFactory {
             case ViewRoutes.register -> new RegisterView();
             case ViewRoutes.student -> new StudentView();
             case ViewRoutes.conceptMatching -> new ConceptMatchingView();
+            case ViewRoutes.topicsConceptMatching -> new TopicsConceptMatchingView();
             default -> null;
         };
     }

@@ -61,7 +61,7 @@ public class ConceptMatchingView extends View {
     @Override
     public JPanel build(BuildOptions options) {
 
-        //tema = (int) options.arguments().getOrDefault("tema", 1);
+        tema = (int) options.arguments().getOrDefault("tema", 1);
 
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(AppColors.secondary40);
