@@ -49,7 +49,7 @@ public class ConceptoDAOImp implements ConceptoDAO {
     @Override
     public List<ConceptoDTO> getAllConceptos(int tema) throws Exception {
         List<ConceptoDTO> matchList = new ArrayList<>();
-        String query = "SELECT * FROM concepto";
+        String query = "SELECT * FROM concepto"; // WHERE tema = ?
         Transaction transaction = TransactionManager.getInstance().getTransaccion();
         Connection con = transaction.getResource();
         PreparedStatement ps = con.prepareStatement(query);
