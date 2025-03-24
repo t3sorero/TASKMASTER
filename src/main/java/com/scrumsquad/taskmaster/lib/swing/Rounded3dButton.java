@@ -142,7 +142,7 @@ public class Rounded3dButton extends JButton {
             bgLighter = SwingUtils.withAlpha(SwingUtils.whiterColor(bg, bgRatio), opacity);
             bg = SwingUtils.withAlpha(bg, opacity);
             bgSide = SwingUtils.withAlpha(SwingUtils.blackerColor(bgDarker, bgRatio), opacity);
-        } else if (hover || pressed) {
+        } else if (hover || pressed || focus) {
             bgDarker = bg;
             bg = SwingUtils.whiterColor(bg, bgRatio);
             bgLighter = SwingUtils.whiterColor(bg, bgRatio);
@@ -175,7 +175,7 @@ public class Rounded3dButton extends JButton {
             g2d.setColor(isEnabled() ? getForeground() : SwingUtils.withAlpha(getForeground(), opacity));
             g2d.setPaint(null);
             g2d.setFont(getFont());
-            SwingUtils.drawStringWithLetterSpacing(g2d, getText(), w, h - sideHeight, letterSpacing, new Point(0, addedY));
+            SwingUtils.drawStringWithLetterSpacing(g2d, getText(), w - 48, h - sideHeight - 4, letterSpacing, new Point(24, addedY + 2));
         }
         g2d.dispose();
     }

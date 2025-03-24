@@ -202,10 +202,9 @@ public class AppController {
             }
 
             public void updateFrame() {
-                CardLayout layout = (CardLayout) cardsPanel.getLayout();
                 if (frame.views.isEmpty()) {
                     backButtonPanel.removeAll();
-                    layout.show(cardsPanel, "0");
+                    cardLayout.show(cardsPanel, "0");
                     headerPanel.setVisible(false);
                 } else {
                     RouteView head = frame.views.peek();
@@ -239,7 +238,7 @@ public class AppController {
                         }
                     }
                     boolean headerVisible = hasTitle || backButtonVisible || hasComponents;
-                    layout.show(cardsPanel, frame.views.size() + "");
+                    cardLayout.show(cardsPanel, frame.views.size() + "");
                     headerPanel.setVisible(headerVisible);
                 }
                 revalidate();

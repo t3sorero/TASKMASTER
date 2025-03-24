@@ -154,7 +154,7 @@ public class RoundedButton extends JButton {
             final String text = getText();
             g2d.setPaint(null);
             g2d.setFont(getFont());
-            SwingUtils.drawStringWithLetterSpacing(g2d, text, w, h, letterSpacing);
+            SwingUtils.drawStringWithLetterSpacing(g2d, text, w - 48, h - 4, letterSpacing, new Point(24, 2));
         }
         g2d.dispose();
     }

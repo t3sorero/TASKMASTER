@@ -23,6 +23,7 @@ public class AppColors {
     public static final Color primaryText = CommonUtils.calculateTextColor(AppColors.primary, AppColors.background, AppColors.text);
     public static final Color secondaryText = CommonUtils.calculateTextColor(AppColors.secondary, AppColors.background, AppColors.text);
     public static final Color accentText = CommonUtils.calculateTextColor(AppColors.accent, AppColors.background, AppColors.text);
+    public static final Color exitText = CommonUtils.calculateTextColor(AppColors.exit, AppColors.background, AppColors.text);;
 
     public static final Color primary95 = SwingUtils.withAlpha(primary, 0.95f);
     public static final Color primary90 = SwingUtils.withAlpha(primary, 0.9f);

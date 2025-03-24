@@ -95,38 +95,61 @@ public class SwingUtils {
 
     public static void drawStringWithLetterSpacing(Graphics2D g2d, String text, int width, int height, int letterSpacing, Point point) {
         if (text == null || text.trim().isEmpty()) return;
+        if (width <= 0 || height <= 0) return;
+        if (point.x < 0 || point.x >= width) return;
+        if (point.y < 0 || point.y >= height) return;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         FontMetrics metrics = g2d.getFontMetrics();
         int spacing = Math.max(0, letterSpacing);
+        int textWidth = metrics.stringWidth(text) + spacing * (text.length() - 1);
+        int numLines = (textWidth / width) + 1;
+        int textHeight = metrics.getHeight();
+        int minWidth = textWidth / numLines;
+        boolean tooMuchHeight = false;
+        if (numLines * textHeight > height) {
+            tooMuchHeight = true;
+            numLines = height / textHeight;
+            minWidth = width;
+        }
         final String[] words = text.split(" ");
         java.util.List<String> lines = new ArrayList<>();
         java.util.List<Integer> linesWidth = new ArrayList<>();
         String line = "";
-        for (String word : words) {
+        for (int i = 0; i < words.length && lines.size() < numLines; i++) {
+            String word = words[i];
             final String lineWithWord = line.isEmpty() ? word : line + ' ' + word;
-            int lineWithWordWidth = metrics.stringWidth(lineWithWord);
-            if (spacing > 0) {
-                lineWithWordWidth += letterSpacing * (lineWithWord.length() - 1);
-            }
-            if (lineWithWordWidth < width - 8) {
+            int lineWithWordWidth = metrics.stringWidth(lineWithWord) + spacing * (lineWithWord.length() - 1);
+            if (lineWithWordWidth < minWidth) {
                 line = lineWithWord;
             } else {
-                lines.add(line);
-                int lineWidth = metrics.stringWidth(line);
-                if (spacing > 0) {
-                    lineWidth += letterSpacing * (line.length() - 1);
+                if (lineWithWordWidth < width) {
+                    line = lineWithWord;
                 }
-                linesWidth.add(lineWidth);
-                line = word;
+                if (tooMuchHeight && lines.size() == numLines - 1) {
+                    line = line + ' ';
+                    int lineLength = line.length();
+                    String lineWithDots = line + "...";
+                    int lineWithDotsWidth = metrics.stringWidth(lineWithDots) + spacing * (lineWithDots.length() - 1);
+                    while (lineWithDotsWidth > width) {
+                        lineLength -= 1;
+                        lineWithDots = line.substring(0, lineLength) + "...";
+                        lineWithDotsWidth = metrics.stringWidth(lineWithDots) + spacing * (lineWithDots.length() - 1);
+                    }
+                    line = lineWithDots;
+                }
+                lines.add(line);
+                linesWidth.add(metrics.stringWidth(line) + spacing * (line.length() - 1));
+                if (lineWithWordWidth < width) {
+                    line = "";
+                } else {
+                    line = word;
+                }
             }
         }
-        lines.add(line);
-        int lineWidth = metrics.stringWidth(line);
-        if (spacing > 0) {
-            lineWidth += letterSpacing * (line.length() - 1);
+        if (lines.size() < numLines) {
+            lines.add(line);
+            linesWidth.add(metrics.stringWidth(line) + spacing * (line.length() - 1));
         }
-        linesWidth.add(lineWidth);
-        int textHeight = metrics.getHeight();
         int imageHeight = Math.min(height, lines.size() * textHeight);
         boolean done = false;
         int linesPainted = 0;
@@ -145,7 +168,7 @@ public class SwingUtils {
                 // Draw each character with spacing
                 for (char c : text.toCharArray()) {
                     g2d.drawString(String.valueOf(c), x, y + Math.max(point.y, 0) + textAscent);
-                    x += metrics.charWidth(c) + letterSpacing; // Move to the next character position
+                    x += metrics.charWidth(c) + spacing; // Move to the next character position
                 }
             }
             y += textHeight;

@@ -20,15 +20,17 @@ public class ConceptMatchingView extends View {
     private static final int height = 592;
 
     private static final Color[] selectedColors = {
-            new Color(0xF8BBD0),
-            new Color(0xB2E7C8),
-            new Color(0xD6B3E9),
-            new Color(0xFFF3B0)
+            new Color(0x53E8E8),
+            new Color(0xFF9D33),
+            new Color(0x1E96FF),
+            new Color(0xF4C043)
     };
 
     private final Map<Integer, Integer> conceptoMap = new HashMap<>();
     private final Map<Integer, Integer> definicionMap = new HashMap<>();
 
+    private JPanel cardPanel;
+    private CardLayout cardLayout;
     private JPanel gamePanel;
     private JPanel gameResultPanel;
     private JPanel buttonsConceptosPanel;
@@ -46,7 +48,7 @@ public class ConceptMatchingView extends View {
     private JButton sendButton;
     private JButton retryButton;
     private JButton exitButton;
-    private final String retryButtonPath = "/images/retry-icon.png";
+    private static final String retryButtonPath = "/images/retry-icon.png";
 
     private Integer selectedConcepto = null;
     private Integer selectedDefinicion = null;
@@ -58,7 +60,7 @@ public class ConceptMatchingView extends View {
     @Override
     public JPanel build(BuildOptions options) {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(AppColors.secondary40);
+        panel.setBackground(AppColors.secondary);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
 
         gamePanel = new RoundedPanel(16);
@@ -89,7 +91,7 @@ public class ConceptMatchingView extends View {
         gameResultPanel.add(incorrectNumberLabel, horizontalConstraints);
         bottomPanel.add(gameResultPanel, BorderLayout.WEST);
 
-        actionButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        actionButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
         actionButtonsPanel.setBorder(SwingUtils.emptyBorderBottom(16));
         actionButtonsPanel.setOpaque(false);
         sendButton = new RoundedButton("COMPROBAR RESPUESTAS");
@@ -98,64 +100,23 @@ public class ConceptMatchingView extends View {
         sendButton.setForeground(AppColors.primaryText);
         sendButton.setBorder(SwingUtils.emptyBorder(64, 16));
         sendButton.addActionListener((e) -> {
-            if (toa == null) return;
-            sendButton.setEnabled(false);
-            sendButton.setVisible(false);
-            retryButton.setVisible(true);
-            exitButton.setVisible(true);
-            for (JButton button : conceptosButtons) {
-                button.setEnabled(false);
-            }
-            for (JButton button : definicionesButtons) {
-                button.setEnabled(false);
-            }
-            Map<Integer, Integer> data = new HashMap<>();
-            Set<Integer> conceptosIds = new HashSet<>();
-            for (Map.Entry<Integer, Integer> entry : conceptoMap.entrySet()) {
-                data.put(
-                        toa.getConceptos().get(entry.getKey()).getId(),
-                        toa.getDefiniciones().get(entry.getValue()).getId());
-            }
-            for (ConceptoDTO concepto : toa.getConceptos()) {
-                conceptosIds.add(concepto.getId());
-            }
-            Context ctx = new Context(CommandName.conceptMatchingCheckAnswer);
-            ctx.setArgument("userAnswers", data);
-            ctx.setArgument("conceptosIds", conceptosIds);
-            AppController.getInstance().action(ctx);
+            sendGameResults();
         });
+        sendButton.setEnabled(false);
         actionButtonsPanel.add(sendButton);
 
-        ImageIcon originalIcon = new ImageIcon(ResourceLoader.loadImage(retryButtonPath));
-        Image resizedImage = originalIcon.getImage().getScaledInstance(48, 48, Image.SCALE_SMOOTH);
-        ImageIcon resizedIcon = new ImageIcon(resizedImage);
-        retryButton = new TransparentButton(resizedIcon,48,48);
+        retryButton = new RoundedButtonWithImage(retryButtonPath);
+        retryButton.setBorder(SwingUtils.emptyBorder(48, 24));
         retryButton.addActionListener((e) -> {
-            correctNumberLabel.setText("-");
-            incorrectNumberLabel.setText("-");
-            sendButton.setEnabled(true);
-            sendButton.setVisible(true);
-            retryButton.setVisible(false);
-            exitButton.setVisible(false);
-            for (JButton button : conceptosButtons) {
-                button.setEnabled(true);
-            }
-            for (JButton button : definicionesButtons) {
-                button.setEnabled(true);
-            }
-            conceptosGood.clear();
-            definicionesGood.clear();
-            conceptosBad.clear();
-            definicionesBad.clear();
-            onLoad();
+            resetGame();
         });
 
         retryButton.setVisible(false);
         actionButtonsPanel.add(retryButton);
 
-        exitButton = new RoundedButton("EXIT");
+        exitButton = new RoundedButton("SALIR");
         exitButton.setFont(FontUtils.lato14);
-        exitButton.setBackground(AppColors.exit);
+        exitButton.setBackground(AppColors.primary);
         exitButton.setForeground(AppColors.primaryText);
         exitButton.setBorder(SwingUtils.emptyBorder(64, 16));
         exitButton.addActionListener((e) -> {
@@ -168,6 +129,16 @@ public class ConceptMatchingView extends View {
 
         gamePanel.add(bottomPanel, BorderLayout.SOUTH);
 
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+        cardPanel.setOpaque(false);
+
+        JPanel loadingPanel = new JPanel(new GridBagLayout());
+        loadingPanel.setOpaque(false);
+        JLabel loadingIconPanel = new JLabel(ResourceLoader.loadImageIcon("/images/loading_80x80.gif"));
+        loadingPanel.add(loadingIconPanel, constraints);
+        cardPanel.add("loading", loadingPanel);
+
         JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 64, 0));
         buttonsPanel.setOpaque(false);
         buttonsPanel.setBorder(SwingUtils.emptyBorder(32, 0));
@@ -177,8 +148,10 @@ public class ConceptMatchingView extends View {
         buttonsDefinicionesPanel.setOpaque(false);
         buttonsPanel.add(buttonsConceptosPanel);
         buttonsPanel.add(buttonsDefinicionesPanel);
+        cardPanel.add("loaded", buttonsPanel);
 
-        gamePanel.add(buttonsPanel, BorderLayout.CENTER);
+        gamePanel.add(cardPanel, BorderLayout.CENTER);
+        cardLayout.show(cardPanel, "loading");
 
         panel.add(gamePanel, constraints);
         return panel;
@@ -186,6 +159,7 @@ public class ConceptMatchingView extends View {
 
     @Override
     public void onLoad() {
+        cardLayout.show(cardPanel, "loading");
         AppController.getInstance().action(new Context(CommandName.conceptMatchingGetData));
     }
 
@@ -195,10 +169,13 @@ public class ConceptMatchingView extends View {
         switch (ctx.getCommandName()) {
             case CommandName.conceptMatchingGetDataOk: {
                 toa = (ConceptosDefinicionesTOA) ctx.getArguments().get("toa");
+                cardLayout.show(cardPanel, "loaded");
                 addConceptos(toa.getConceptos());
                 addDefiniciones(toa.getDefiniciones());
+                sendButton.setEnabled(true);
                 buttonsConceptosPanel.revalidate();
                 buttonsDefinicionesPanel.revalidate();
+                actionButtonsPanel.revalidate();
                 break;
             }
             case CommandName.conceptMatchingCheckAnswerOk: {
@@ -212,6 +189,47 @@ public class ConceptMatchingView extends View {
                 break;
             }
         }
+    }
+
+    private void sendGameResults() {
+        if (toa == null) return;
+        sendButton.setEnabled(false);
+        sendButton.setVisible(false);
+        retryButton.setVisible(true);
+        exitButton.setVisible(true);
+        for (JButton button : conceptosButtons) {
+            button.setEnabled(false);
+        }
+        for (JButton button : definicionesButtons) {
+            button.setEnabled(false);
+        }
+        Map<Integer, Integer> data = new HashMap<>();
+        Set<Integer> conceptosIds = new HashSet<>();
+        for (Map.Entry<Integer, Integer> entry : conceptoMap.entrySet()) {
+            data.put(
+                    toa.getConceptos().get(entry.getKey()).getId(),
+                    toa.getDefiniciones().get(entry.getValue()).getId());
+        }
+        for (ConceptoDTO concepto : toa.getConceptos()) {
+            conceptosIds.add(concepto.getId());
+        }
+        Context ctx = new Context(CommandName.conceptMatchingCheckAnswer);
+        ctx.setArgument("userAnswers", data);
+        ctx.setArgument("conceptosIds", conceptosIds);
+        AppController.getInstance().action(ctx);
+    }
+
+    private void resetGame() {
+        correctNumberLabel.setText("-");
+        incorrectNumberLabel.setText("-");
+        sendButton.setVisible(true);
+        retryButton.setVisible(false);
+        exitButton.setVisible(false);
+        conceptosGood.clear();
+        definicionesGood.clear();
+        conceptosBad.clear();
+        definicionesBad.clear();
+        onLoad();
     }
 
     private void setGameResults(Map<Integer, Boolean> results) {
@@ -341,10 +359,10 @@ public class ConceptMatchingView extends View {
                 }
             });
             JPanel goodPanel = new ImagePanel("/images/good_icon.png");
-            goodPanel.setBounds(4, 4, 20, 20);
+            goodPanel.setBounds(4, 4, 24, 24);
             goodPanel.setVisible(false);
             JPanel badPanel = new ImagePanel("/images/bad_icon.png");
-            badPanel.setBounds(4, 4, 20, 20);
+            badPanel.setBounds(4, 4, 24, 24);
             badPanel.setVisible(false);
 
             conceptosButtons.add(button);
@@ -365,17 +383,17 @@ public class ConceptMatchingView extends View {
         definicionMap.clear();
         colorsUsed.clear();
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
-        constraints.insets = new Insets(16, 0, 16, 0);
+        constraints.insets = new Insets(8, 0, 8, 0);
         for (int i = 0; i < definiciones.size(); i++) {
             DefinicionDTO definicion = definiciones.get(i);
             JLayeredPane layeredPane = new JLayeredPane();
-            layeredPane.setPreferredSize(new Dimension(416, 48));
+            layeredPane.setPreferredSize(new Dimension(416, 56));
             Rounded3dButton button = new Rounded3dButton(definicion.getDescripcion());
             button.setLetterSpacing(0);
             button.setFont(FontUtils.lato14);
             button.setBackground(AppColors.background);
             button.setForeground(AppColors.text);
-            button.setBounds(0,0,416, 48);
+            button.setBounds(0,0,416, 56);
             final int index = i;
             button.addActionListener((e) -> {
                 // Antes -> Si existe unión se quita
@@ -442,10 +460,10 @@ public class ConceptMatchingView extends View {
                 }
             });
             JPanel goodPanel = new ImagePanel("/images/good_icon.png");
-            goodPanel.setBounds(4, 4, 16, 16);
+            goodPanel.setBounds(4, 4, 24, 24);
             goodPanel.setVisible(false);
             JPanel badPanel = new ImagePanel("/images/bad_icon.png");
-            badPanel.setBounds(4, 4, 16, 16);
+            badPanel.setBounds(4, 4, 24, 24);
             badPanel.setVisible(false);
 
             definicionesButtons.add(button);
