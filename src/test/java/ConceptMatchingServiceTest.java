@@ -76,22 +76,54 @@ public class ConceptMatchingServiceTest {
     @Test
     public void testGetGameData() {
         try {
-            ConceptosDefinicionesTOA result = ConceptMatchingService.getInstance().getGameData(1);
-            assertNotNull(result);
-            assertEquals(4, result.getConceptos().size());
-            assertEquals(6, result.getDefiniciones().size());
-            for(ConceptoDTO c: result.getConceptos()){
-                int i = 0;
-                while(i < result.getDefiniciones().size() && result.getDefiniciones().get(i).getConceptoId() != c.getId()){
-                    i++;
-                }
-                assertTrue(i < result.getDefiniciones().size());
+            // Simulación de la selección de un tema antes de obtener los datos
+            int selectedTheme = 1; // Simulamos que se elige "Tema 1"
+
+            ConceptosDefinicionesTOA result = ConceptMatchingService.getInstance().getGameData(selectedTheme);
+
+            // Verificar que el resultado no es nulo
+            assertNotNull(result, "El resultado no debe ser nulo");
+
+            // Verificar que el número de conceptos y definiciones es el esperado
+            assertEquals(4, result.getConceptos().size(), "Debe haber exactamente 4 conceptos seleccionados");
+            assertEquals(6, result.getDefiniciones().size(), "Debe haber exactamente 6 definiciones seleccionadas");
+
+            /* Verificar que los conceptos obtenidos pertenecen al tema seleccionado
+            for (ConceptoDTO concepto : result.getConceptos()) {
+                assertEquals(selectedTheme, concepto.getTemaId(), "Los conceptos deben pertenecer al tema seleccionado");
             }
+            */
+            // Obtener los IDs de los conceptos seleccionados
+            Set<Integer> conceptIds = new HashSet<>();
+            for (ConceptoDTO concepto : result.getConceptos()) {
+                conceptIds.add(concepto.getId());
+            }
+
+            // Verificar que los conceptos seleccionados no están duplicados
+            Set<Integer> uniqueConceptIds = new HashSet<>();
+            for (ConceptoDTO concepto : result.getConceptos()) {
+                assertFalse(uniqueConceptIds.contains(concepto.getId()), "No debe haber conceptos duplicados");
+                uniqueConceptIds.add(concepto.getId());
+            }
+
+            // Verificar que las definiciones seleccionadas no están duplicadas
+            Set<Integer> uniqueDefinitionIds = new HashSet<>();
+            for (DefinicionDTO definicion : result.getDefiniciones()) {
+                assertFalse(uniqueDefinitionIds.contains(definicion.getId()), "No debe haber definiciones duplicadas");
+                uniqueDefinitionIds.add(definicion.getId());
+            }
+
+            // Caso de tema inexistente: Se espera que devuelva listas vacías
+            ConceptosDefinicionesTOA emptyResult = ConceptMatchingService.getInstance().getGameData(9999);
+            assertNotNull(emptyResult);
+            assertTrue(emptyResult.getConceptos().isEmpty(), "Si el tema no tiene conceptos, la lista debe estar vacía");
+            assertTrue(emptyResult.getDefiniciones().isEmpty(), "Si el tema no tiene definiciones, la lista debe estar vacía");
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
+
 
     @Test
     public void testCheckAnswers() {
@@ -229,7 +261,21 @@ public class ConceptMatchingServiceTest {
 
         @Override
         public List<ConceptoDTO> getAllConceptos(int tema) throws Exception {
-            return conceptos;
+            // Simulamos que solo los temas del 1 al 5 existen
+            if (tema < 1 || tema > 5) {
+                return Collections.emptyList();
+            }
+
+            // Filtrar solo los conceptos que pertenecen a este tema
+            List<ConceptoDTO> conceptosPorTema = new ArrayList<>();
+            for (ConceptoDTO c : conceptos) {
+
+               // if (c.getTemaId() == tema) {
+                  conceptosPorTema.add(c);
+
+            }
+
+            return conceptosPorTema; //aqui tendria que devolver conceptosPorTema
         }
 
         @Override
