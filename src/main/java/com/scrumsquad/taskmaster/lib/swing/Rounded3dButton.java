@@ -175,7 +175,7 @@ public class Rounded3dButton extends JButton {
             g2d.setColor(isEnabled() ? getForeground() : SwingUtils.withAlpha(getForeground(), opacity));
             g2d.setPaint(null);
             g2d.setFont(getFont());
-            SwingUtils.drawStringWithLetterSpacing(g2d, getText(), w - 48, h - sideHeight - 4, letterSpacing, new Point(24, addedY + 2));
+            SwingUtils.drawStringWithLetterSpacing(g2d, getText(), w - 64, h - sideHeight - 4, letterSpacing, new Point(32, addedY + 2));
         }
         g2d.dispose();
     }

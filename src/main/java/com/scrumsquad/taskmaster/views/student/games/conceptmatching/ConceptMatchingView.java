@@ -60,7 +60,7 @@ public class ConceptMatchingView extends View {
     @Override
     public JPanel build(BuildOptions options) {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(AppColors.secondary);
+        panel.setBackground(AppColors.secondary40);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
 
         gamePanel = new RoundedPanel(16);
@@ -359,10 +359,10 @@ public class ConceptMatchingView extends View {
                 }
             });
             JPanel goodPanel = new ImagePanel("/images/good_icon.png");
-            goodPanel.setBounds(4, 4, 24, 24);
+            goodPanel.setBounds(4, 4, 20, 20);
             goodPanel.setVisible(false);
             JPanel badPanel = new ImagePanel("/images/bad_icon.png");
-            badPanel.setBounds(4, 4, 24, 24);
+            badPanel.setBounds(4, 4, 20, 20);
             badPanel.setVisible(false);
 
             conceptosButtons.add(button);
@@ -460,10 +460,10 @@ public class ConceptMatchingView extends View {
                 }
             });
             JPanel goodPanel = new ImagePanel("/images/good_icon.png");
-            goodPanel.setBounds(4, 4, 24, 24);
+            goodPanel.setBounds(4, 4, 20, 20);
             goodPanel.setVisible(false);
             JPanel badPanel = new ImagePanel("/images/bad_icon.png");
-            badPanel.setBounds(4, 4, 24, 24);
+            badPanel.setBounds(4, 4, 20, 20);
             badPanel.setVisible(false);
 
             definicionesButtons.add(button);
