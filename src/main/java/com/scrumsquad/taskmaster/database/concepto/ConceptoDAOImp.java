@@ -47,12 +47,13 @@ public class ConceptoDAOImp implements ConceptoDAO {
     }
 
     @Override
-    public List<ConceptoDTO> getAllConceptos() throws Exception {
+    public List<ConceptoDTO> getAllConceptos(int tema) throws Exception {
         List<ConceptoDTO> matchList = new ArrayList<>();
         String query = "SELECT * FROM concepto";
         Transaction transaction = TransactionManager.getInstance().getTransaccion();
         Connection con = transaction.getResource();
         PreparedStatement ps = con.prepareStatement(query);
+        //ps.setInt(1, tema);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             matchList.add(new ConceptoDTO(

@@ -76,7 +76,7 @@ public class ConceptMatchingServiceTest {
     @Test
     public void testGetGameData() {
         try {
-            ConceptosDefinicionesTOA result = ConceptMatchingService.getInstance().getGameData();
+            ConceptosDefinicionesTOA result = ConceptMatchingService.getInstance().getGameData(1);
             assertNotNull(result);
             assertEquals(4, result.getConceptos().size());
             assertEquals(6, result.getDefiniciones().size());
@@ -228,7 +228,7 @@ public class ConceptMatchingServiceTest {
         }
 
         @Override
-        public List<ConceptoDTO> getAllConceptos() throws Exception {
+        public List<ConceptoDTO> getAllConceptos(int tema) throws Exception {
             return conceptos;
         }
 

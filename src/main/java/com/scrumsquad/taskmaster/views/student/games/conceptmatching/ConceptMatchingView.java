@@ -54,11 +54,15 @@ public class ConceptMatchingView extends View {
     private Integer selectedDefinicion = null;
     private final Set<Color> colorsUsed = new HashSet<>();
     private Color selectedColor = null;
+    private int tema = 1;
 
     private ConceptosDefinicionesTOA toa;
 
     @Override
     public JPanel build(BuildOptions options) {
+
+        //tema = (int) options.arguments().getOrDefault("tema", 1);
+
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(AppColors.secondary40);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
@@ -160,7 +164,9 @@ public class ConceptMatchingView extends View {
     @Override
     public void onLoad() {
         cardLayout.show(cardPanel, "loading");
-        AppController.getInstance().action(new Context(CommandName.conceptMatchingGetData));
+        Context ctx = new Context(CommandName.conceptMatchingGetData);
+        ctx.setArgument("tema", tema);
+        AppController.getInstance().action(ctx);
     }
 
     @Override

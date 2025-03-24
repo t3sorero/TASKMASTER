@@ -12,7 +12,7 @@ public class ConceptMatchingGetDataCommand implements Command {
     @Override
     public Context execute(Context context) {
         try {
-            var gameData = ConceptMatchingService.getInstance().getGameData();
+            var gameData = ConceptMatchingService.getInstance().getGameData((int) context.getArguments().get("tema"));
             Map<String, Object> args = new HashMap<>();
             args.put("toa", gameData);
             return new Context(CommandName.conceptMatchingGetDataOk, args);

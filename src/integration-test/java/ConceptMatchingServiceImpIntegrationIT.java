@@ -38,13 +38,13 @@
                 DefinicionDAO mockDefinicionDAO = mock(DefinicionDAO.class);
                 factory.when(DAOFactory::getConceptoDAO).thenReturn(mockConceptoDAO);
                 factory.when(DAOFactory::getDefinicionesDAO).thenReturn(mockDefinicionDAO);
-                when(mockConceptoDAO.getAllConceptos()).thenReturn(conceptos);
+                when(mockConceptoDAO.getAllConceptos(1)).thenReturn(conceptos);
                 when(mockDefinicionDAO.getDefinicionesByConcepto(anyInt())).thenAnswer(invocation -> {
                     Integer id = invocation.getArgument(0);
                     return List.of(new DefinicionDTO(id * 10, "Definition for " + id, id));
                 });
                 ConceptMatchingService service = new ConceptMatchingServiceImp();
-                ConceptosDefinicionesTOA result = service.getGameData();
+                ConceptosDefinicionesTOA result = service.getGameData(1);
                 for (ConceptoDTO c : result.getConceptos()) {
                     assertTrue(result.getDefiniciones().stream().anyMatch(d -> d.getConceptoId() == c.getId()));
                 }
@@ -63,10 +63,10 @@
                 DefinicionDAO mockDefinicionDAO = mock(DefinicionDAO.class);
                 factory.when(DAOFactory::getConceptoDAO).thenReturn(mockConceptoDAO);
                 factory.when(DAOFactory::getDefinicionesDAO).thenReturn(mockDefinicionDAO);
-                when(mockConceptoDAO.getAllConceptos()).thenReturn(Collections.emptyList());
+                when(mockConceptoDAO.getAllConceptos(1)).thenReturn(Collections.emptyList());
                 when(mockDefinicionDAO.getDefinicionesByConcepto(anyInt())).thenReturn(Collections.emptyList());
                 ConceptMatchingService service = new ConceptMatchingServiceImp();
-                ConceptosDefinicionesTOA result = service.getGameData();
+                ConceptosDefinicionesTOA result = service.getGameData(1);
                 assertNotNull(result);
                 assertTrue(result.getConceptos().isEmpty());
                 assertTrue(result.getDefiniciones().isEmpty());

@@ -64,7 +64,7 @@ public class ConceptMatchingCheckAnswerCommandTest {
     }
     class ConceptMatchingServiceFake extends ConceptMatchingService{
         @Override
-        public ConceptosDefinicionesTOA getGameData() throws Exception {
+        public ConceptosDefinicionesTOA getGameData(int tema) throws Exception {
             return null;
         }
 

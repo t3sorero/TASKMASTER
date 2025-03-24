@@ -22,7 +22,7 @@ public abstract class ConceptMatchingService {
     /**
      * Obtiene los conceptos y definiciones desde la base de datos.
      */
-    public abstract ConceptosDefinicionesTOA getGameData() throws Exception;
+    public abstract ConceptosDefinicionesTOA getGameData(int tema) throws Exception;
 
     /**
      * Verifica las respuestas enviadas por el usuario.

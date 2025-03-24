@@ -93,7 +93,7 @@ public class ConceptoDAOTest {
             when(tmImp.getTransaccion()).thenReturn(tx);
             tm.when(TransactionManager::getInstance).thenReturn(tmImp);
             ConceptoDAO dao = new ConceptoDAOImp();
-            List<ConceptoDTO> list = dao.getAllConceptos();
+            List<ConceptoDTO> list = dao.getAllConceptos(1);
             assertEquals(1, list.size());
             assertEquals(10, list.get(0).getId());
         }

@@ -13,7 +13,7 @@ public class ConceptMatchingServiceImp extends ConceptMatchingService {
     private static final int CONCEPTS = 4;
     private static final int DEFINITIONS = 6;
 
-    public ConceptosDefinicionesTOA getGameData() throws Exception {
+    public ConceptosDefinicionesTOA getGameData(int tema) throws Exception {
 
         Transaction t = TransactionManager.getInstance().nuevaTransaccion();
         try {
@@ -21,7 +21,7 @@ public class ConceptMatchingServiceImp extends ConceptMatchingService {
             var daoDefiniciones = DAOFactory.getDefinicionesDAO();
             var daoConceptos = DAOFactory.getConceptoDAO();
 
-            var conceptos = daoConceptos.getAllConceptos();
+            var conceptos = daoConceptos.getAllConceptos(tema);
 
             if (conceptos.isEmpty()) {
                 t.commit();
@@ -51,8 +51,8 @@ public class ConceptMatchingServiceImp extends ConceptMatchingService {
             t.rollback();
             throw e;
         }
-
     }
+
     public Map<Integer, Boolean> checkAnswers(Map<Integer, Integer> userAnswers, Set<Integer> conceptosIds) throws Exception {
         Transaction t = TransactionManager.getInstance().nuevaTransaccion();
         try{

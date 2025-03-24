@@ -26,6 +26,7 @@ public class ConceptMatchingGetDataCommandTest {
         mockCM.when(ConceptMatchingService::getInstance).thenReturn(new ConceptMatchingServiceFake());
 
         Context context = new Context(CommandName.conceptMatchingGetData);
+        context.setArgument("tema", 1);
         ConceptMatchingGetDataCommand command = new ConceptMatchingGetDataCommand();
         Context r1 = command.execute(context);
         assertTrue(r1.getCommandName() == CommandName.conceptMatchingGetDataOk);
@@ -50,7 +51,7 @@ public class ConceptMatchingGetDataCommandTest {
 
     class ConceptMatchingServiceFake extends ConceptMatchingService {
         @Override
-        public ConceptosDefinicionesTOA getGameData() throws Exception {
+        public ConceptosDefinicionesTOA getGameData(int tema) throws Exception {
             return new ConceptosDefinicionesTOA(new ArrayList<ConceptoDTO>(), new ArrayList<DefinicionDTO>());
         }
 
