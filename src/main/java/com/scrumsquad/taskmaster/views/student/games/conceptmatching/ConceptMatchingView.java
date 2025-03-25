@@ -1,6 +1,7 @@
 package com.scrumsquad.taskmaster.views.student.games.conceptmatching;
 
 import com.scrumsquad.taskmaster.controller.AppController;
+import com.scrumsquad.taskmaster.controller.Navigator;
 import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
@@ -126,7 +127,7 @@ public class ConceptMatchingView extends View {
         exitButton.setForeground(AppColors.primaryText);
         exitButton.setBorder(SwingUtils.emptyBorder(64, 16));
         exitButton.addActionListener((e) -> {
-            //de momento nada
+            Navigator.getNavigator().back();
         });
         exitButton.setVisible(false);
         actionButtonsPanel.add(exitButton);
