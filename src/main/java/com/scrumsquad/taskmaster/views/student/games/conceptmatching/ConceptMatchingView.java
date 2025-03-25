@@ -29,6 +29,7 @@ public class ConceptMatchingView extends View {
     private final Map<Integer, Integer> conceptoMap = new HashMap<>();
     private final Map<Integer, Integer> definicionMap = new HashMap<>();
 
+    private JPanel mainPanel;
     private JPanel cardPanel;
     private CardLayout cardLayout;
     private JPanel gamePanel;
@@ -64,6 +65,7 @@ public class ConceptMatchingView extends View {
         tema = (int) options.arguments().getOrDefault("tema", 1);
 
         JPanel panel = new JPanel(new GridBagLayout());
+        mainPanel = panel;
         panel.setBackground(AppColors.secondary40);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
 
@@ -82,12 +84,12 @@ public class ConceptMatchingView extends View {
         final JPanel correctIcon = new ImagePanel("/images/good_icon.png");
         correctIcon.setPreferredSize(new Dimension(32, 32));
         correctNumberLabel = new JLabel("-");
-        correctNumberLabel.setFont(FontUtils.lato16);
+        correctNumberLabel.setFont(FontUtils.lato20);
         correctNumberLabel.setForeground(AppColors.accentText);
         final JPanel incorrectIcon = new ImagePanel("/images/bad_icon.png");
         incorrectIcon.setPreferredSize(new Dimension(32, 32));
         incorrectNumberLabel = new JLabel("-");
-        incorrectNumberLabel.setFont(FontUtils.lato16);
+        incorrectNumberLabel.setFont(FontUtils.lato20);
         incorrectNumberLabel.setForeground(AppColors.accentText);
         gameResultPanel.add(correctIcon, horizontalConstraints);
         gameResultPanel.add(correctNumberLabel, horizontalConstraints);
@@ -182,6 +184,7 @@ public class ConceptMatchingView extends View {
                 buttonsConceptosPanel.revalidate();
                 buttonsDefinicionesPanel.revalidate();
                 actionButtonsPanel.revalidate();
+                gamePanel.repaint();
                 break;
             }
             case CommandName.conceptMatchingCheckAnswerOk: {

@@ -15,7 +15,9 @@ public class FontUtils {
     public static final Font lato12 = latoFont.deriveFont(12f);
     public static final Font lato14 = latoFont.deriveFont(14f);
     public static final Font lato16 = latoFont.deriveFont(16f);
+    public static final Font lato18 = latoFont.deriveFont(18f);
     public static final Font lato20 = latoFont.deriveFont(20f);
+    public static final Font lato30 = latoFont.deriveFont(30f);
 
 
 

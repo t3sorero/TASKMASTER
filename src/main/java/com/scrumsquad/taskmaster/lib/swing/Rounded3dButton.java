@@ -103,6 +103,26 @@ public class Rounded3dButton extends JButton {
         return new Dimension(textWidth, textHeight);
     }
 
+    private Container main;
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        Container last = getParent();
+        Container parent = last.getParent();
+        while (parent != null) {
+            last = parent;
+            parent = parent.getParent();
+        }
+        main = last;
+    }
+
+    @Override
+    public void removeNotify() {
+        main = null;
+        super.removeNotify();
+    }
+
     @Override
     public void setText(String text) {
         super.setText(text);
@@ -125,6 +145,10 @@ public class Rounded3dButton extends JButton {
             setMinimumSize(minimumEmptySize);
         }
     }
+
+    private boolean prevPressed = pressed;
+    private boolean prevHover = hover;
+    private boolean prevFocus = focus;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -178,5 +202,13 @@ public class Rounded3dButton extends JButton {
             SwingUtils.drawStringWithLetterSpacing(g2d, getText(), w - 64, h - sideHeight - 4, letterSpacing, new Point(32, addedY + 2));
         }
         g2d.dispose();
+        if (prevPressed != pressed || prevFocus != focus || prevHover != hover) {
+            if (main != null) {
+                main.repaint();
+            }
+            prevPressed = pressed;
+            prevFocus = focus;
+            prevHover = hover;
+        }
     }
 }

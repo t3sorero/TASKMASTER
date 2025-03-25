@@ -243,6 +243,8 @@ public class AppController {
                 }
                 revalidate();
                 repaint();
+                frame.views.peek().viewBuilt().revalidate();
+                frame.views.peek().viewBuilt().repaint();
             }
 
             public void pushView(JPanel panel) {
@@ -278,6 +280,7 @@ public class AppController {
                 public void setBackgroundColor(Color backgroundColor) {
                     this.backgroundColor = backgroundColor;
                     darker = SwingUtils.blackerColor(backgroundColor, .1f);
+                    revalidate();
                     repaint();
                 }
 

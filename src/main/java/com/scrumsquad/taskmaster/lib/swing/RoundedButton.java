@@ -71,6 +71,27 @@ public class RoundedButton extends JButton {
         setBorder(SwingUtils.emptyBorder(8));
     }
 
+
+    private Container main;
+
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        Container last = getParent();
+        Container parent = last.getParent();
+        while (parent != null) {
+            last = parent;
+            parent = parent.getParent();
+        }
+        main = last;
+    }
+
+    @Override
+    public void removeNotify() {
+        main = null;
+        super.removeNotify();
+    }
+
     private Dimension getMinimumDimension(String text) {
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics g = img.getGraphics();
@@ -102,6 +123,10 @@ public class RoundedButton extends JButton {
             setMinimumSize(minimumEmptySize);
         }
     }
+
+    private boolean prevPressed = pressed;
+    private boolean prevHover = hover;
+    private boolean prevFocus = focus;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -157,5 +182,13 @@ public class RoundedButton extends JButton {
             SwingUtils.drawStringWithLetterSpacing(g2d, text, w - 48, h - 4, letterSpacing, new Point(24, 2));
         }
         g2d.dispose();
+        if (prevPressed != pressed || prevFocus != focus || prevHover != hover) {
+            if (main != null) {
+                main.repaint();
+            }
+            prevPressed = pressed;
+            prevFocus = focus;
+            prevHover = hover;
+        }
     }
 }
