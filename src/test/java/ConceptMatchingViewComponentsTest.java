@@ -1,21 +1,35 @@
+import com.scrumsquad.taskmaster.lib.Widget;
 import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
 import com.scrumsquad.taskmaster.views.AppColors;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.ConceptMatchingView;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConceptMatchingViewComponentsTest {
-    ConceptMatchingView view;
+
+    private ConceptMatchingView view;
+    private JFrame frame;
 
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        view.build(null);
+        frame = new JFrame();
+        frame.setContentPane(view.build(new Widget.BuildOptions(frame, new HashMap<>())));
     }
-
+    @AfterEach
+    void tearDown() {
+        if (frame != null) {
+            frame.dispose();
+            frame = null;
+        }
+        view = null;
+    }
     @Test
     void testGamePanelCreated() {
         RoundedPanel gamePanel = TestUtils.getPrivateField(view, "gamePanel", RoundedPanel.class);
