@@ -24,9 +24,9 @@ public class TopicsTheoryView extends View {
         JPanel panelBotones = new JPanel(new GridLayout(3, 1, 40, 40));
         panelBotones.setOpaque(false);
 
-        Rounded3dButton button1 = createButton(1);
-        Rounded3dButton button2 = createButton(2);
-        Rounded3dButton button3 = createButton(3);
+        Rounded3dButton button1 = createButton(1, "Equipos de trabajo");
+        Rounded3dButton button2 = createButton(2, "Metodologías de Gestión de Proyectos");
+        Rounded3dButton button3 = createButton(3, "Scrum");
 
         panelBotones.add(button1);
         panelBotones.add(button2);
@@ -44,8 +44,8 @@ public class TopicsTheoryView extends View {
 
     }
 
-    private Rounded3dButton createButton(int tema) {
-        Rounded3dButton button = new Rounded3dButton("TEMA " + tema);
+    private Rounded3dButton createButton(int tema, String descripcion){
+        Rounded3dButton button = new Rounded3dButton("TEMA " + tema + " - " + descripcion);
         button.setLetterSpacing(2);
         button.setFont(FontUtils.lato30);
         button.setBackground(AppColors.background);
