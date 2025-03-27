@@ -1,4 +1,5 @@
 package com.scrumsquad.taskmaster.views.student.teoria;
+
 import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.lib.ResourceLoader;
 import com.scrumsquad.taskmaster.lib.SwingUtils;
@@ -16,8 +17,6 @@ import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 
 public class TeoriaPorTemaView extends View {
-    private static final int width = 960;
-    private static final int height = 592;
     private int temaId;
     private JPanel mainPanel;
     private CardLayout cardLayout;
@@ -27,9 +26,15 @@ public class TeoriaPorTemaView extends View {
     @Override
     public JPanel build(BuildOptions options) {
         temaId = (int) options.arguments().getOrDefault("tema", 1);
+
         mainPanel = new JPanel(new GridBagLayout());
         mainPanel.setBackground(AppColors.secondary40);
-        GridBagConstraints constraints = SwingUtils.verticalConstraints();
+        GridBagConstraints mainConstraints = new GridBagConstraints();
+        mainConstraints.fill = GridBagConstraints.BOTH;
+        mainConstraints.gridx = 0;
+        mainConstraints.gridy = 0;
+        mainConstraints.weightx = 1.0;
+        mainConstraints.weighty = 1.0;
 
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
@@ -38,7 +43,7 @@ public class TeoriaPorTemaView extends View {
         JPanel loadingPanel = new JPanel(new GridBagLayout());
         loadingPanel.setOpaque(false);
         JLabel loadingLabel = new JLabel(ResourceLoader.loadImageIcon("/images/loading_80x80.gif"));
-        loadingPanel.add(loadingLabel, constraints);
+        loadingPanel.add(loadingLabel);
         cardPanel.add("loading", loadingPanel);
 
         JPanel contentPanel = new JPanel(new BorderLayout());
@@ -49,13 +54,14 @@ public class TeoriaPorTemaView extends View {
         HTMLEditorKit kit = new HTMLEditorKit();
         textPane.setEditorKit(kit);
         StyleSheet styleSheet = kit.getStyleSheet();
-        styleSheet.addRule("body { font-family: sans-serif; margin: 4px; }");
+        styleSheet.addRule("body { font-family: sans-serif; margin: 8px; font-size: 14px; }");
+
         JScrollPane scrollPane = new JScrollPane(textPane);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         contentPanel.add(scrollPane, BorderLayout.CENTER);
         cardPanel.add("loaded", contentPanel);
 
-        mainPanel.add(cardPanel, constraints);
+        mainPanel.add(cardPanel, mainConstraints);
         return mainPanel;
     }
 
@@ -71,9 +77,10 @@ public class TeoriaPorTemaView extends View {
     public void update(Context ctx) {
         if (ctx == null) return;
         if (CommandName.teoriaGetDataOk.equals(ctx.getCommandName())) {
-            String markdown = (String) ctx.getArguments().get("markdown");
+            String markdown = (String) ctx.getArguments().get("teoria");
             String html = convertMarkdownToHTML(markdown);
             textPane.setText(html);
+            textPane.setCaretPosition(0);
             cardLayout.show(cardPanel, "loaded");
         } else if (CommandName.teoriaGetDataKo.equals(ctx.getCommandName())) {
             textPane.setText("<html><body>Error al cargar la teoría.</body></html>");
