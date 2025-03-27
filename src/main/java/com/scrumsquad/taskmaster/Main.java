@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
 
-    private static final String firstRoute = ViewRoutes.topicsConceptMatching;
+    private static final String firstRoute = ViewRoutes.mainMenu;
 
     private static final String[] imagesToPreload = {
             "/images/back-icon-white.png",

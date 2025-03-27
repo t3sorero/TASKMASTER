@@ -88,11 +88,7 @@ public class ConceptMatchingServiceTest {
             assertEquals(4, result.getConceptos().size(), "Debe haber exactamente 4 conceptos seleccionados");
             assertEquals(6, result.getDefiniciones().size(), "Debe haber exactamente 6 definiciones seleccionadas");
 
-            /* Verificar que los conceptos obtenidos pertenecen al tema seleccionado
-            for (ConceptoDTO concepto : result.getConceptos()) {
-                assertEquals(selectedTheme, concepto.getTemaId(), "Los conceptos deben pertenecer al tema seleccionado");
-            }
-            */
+
             // Obtener los IDs de los conceptos seleccionados
             Set<Integer> conceptIds = new HashSet<>();
             for (ConceptoDTO concepto : result.getConceptos()) {
@@ -269,10 +265,7 @@ public class ConceptMatchingServiceTest {
             // Filtrar solo los conceptos que pertenecen a este tema
             List<ConceptoDTO> conceptosPorTema = new ArrayList<>();
             for (ConceptoDTO c : conceptos) {
-
-               // if (c.getTemaId() == tema) {
-                  conceptosPorTema.add(c);
-
+                conceptosPorTema.add(c);
             }
 
             return conceptosPorTema; //aqui tendria que devolver conceptosPorTema
