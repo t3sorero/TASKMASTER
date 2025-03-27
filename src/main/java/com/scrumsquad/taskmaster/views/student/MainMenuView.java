@@ -10,6 +10,7 @@ import com.scrumsquad.taskmaster.views.ViewRoutes;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class MainMenuView extends View {
 
@@ -40,6 +41,9 @@ public class MainMenuView extends View {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         JButton teoriaButton = createStyledButton("TEORÍA", new Color(173, 216, 230), "/images/teoria.png");
+        teoriaButton.addActionListener(e ->{
+                Navigator.getNavigator().to(ViewRoutes.topicsTheory);
+        });
         JButton practicarButton = createStyledButton("PRACTICAR", new Color(255, 150, 120), "/images/ejercicios.png");
         practicarButton.addActionListener(e -> {
             Navigator.getNavigator().to(ViewRoutes.topicsConceptMatching);
