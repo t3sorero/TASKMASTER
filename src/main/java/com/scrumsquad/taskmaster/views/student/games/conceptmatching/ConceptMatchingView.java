@@ -30,11 +30,9 @@ public class ConceptMatchingView extends View {
     private final Map<Integer, Integer> conceptoMap = new HashMap<>();
     private final Map<Integer, Integer> definicionMap = new HashMap<>();
 
-    private JPanel mainPanel;
     private JPanel cardPanel;
     private CardLayout cardLayout;
     private JPanel gamePanel;
-    private JPanel gameResultPanel;
     private JPanel buttonsConceptosPanel;
     private JPanel buttonsDefinicionesPanel;
     private final java.util.List<JButton> conceptosButtons = new ArrayList<>();
@@ -59,6 +57,7 @@ public class ConceptMatchingView extends View {
     private int tema = 1;
 
     private ConceptosDefinicionesTOA toa;
+    private JLabel errorMessagePanel;
 
     @Override
     public JPanel build(BuildOptions options) {
@@ -66,7 +65,6 @@ public class ConceptMatchingView extends View {
         tema = (int) options.arguments().getOrDefault("tema", 1);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        mainPanel = panel;
         panel.setBackground(AppColors.secondary40);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
 
@@ -78,7 +76,7 @@ public class ConceptMatchingView extends View {
         JPanel bottomPanel = new JPanel(new BorderLayout(8, 0));
         bottomPanel.setOpaque(false);
         bottomPanel.setBorder(SwingUtils.emptyBorder(16, 0));
-        gameResultPanel = new JPanel(new GridBagLayout());
+        JPanel gameResultPanel = new JPanel(new GridBagLayout());
         gameResultPanel.setOpaque(false);
         GridBagConstraints horizontalConstraints = SwingUtils.horizontalConstraints();
         horizontalConstraints.insets = new Insets(0, 8, 0, 8);
@@ -146,6 +144,19 @@ public class ConceptMatchingView extends View {
         loadingPanel.add(loadingIconPanel, constraints);
         cardPanel.add("loading", loadingPanel);
 
+        GridBagConstraints errorConstraints = SwingUtils.verticalConstraints();
+        errorConstraints.insets = new Insets(8, 0, 8, 0);
+        JPanel errorPanel = new JPanel(new GridBagLayout());
+        errorPanel.setOpaque(false);
+        JLabel errorIconPanel = new JLabel(ResourceLoader.loadImageIcon("/images/error_icon.png"));
+        errorMessagePanel = new JLabel();
+        errorMessagePanel.setFont(FontUtils.lato30);
+        errorMessagePanel.setForeground(AppColors.error);
+        //errorMessagePanel.setBackground(AppColors.transparent);
+        errorPanel.add(errorIconPanel, errorConstraints);
+        errorPanel.add(errorMessagePanel, errorConstraints);
+        cardPanel.add("error", errorPanel);
+
         JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 64, 0));
         buttonsPanel.setOpaque(false);
         buttonsPanel.setBorder(SwingUtils.emptyBorder(32, 0));
@@ -193,9 +204,14 @@ public class ConceptMatchingView extends View {
                 setGameResults(feedback);
                 break;
             }
-            case CommandName.conceptMatchingGetDataKo:
+            case CommandName.conceptMatchingGetDataKo:{
+                errorMessagePanel.setText("Ocurrió un error al cargar las preguntas");
+                cardLayout.show(cardPanel, "error");
+                break;
+            }
             case CommandName.conceptMatchingCheckAnswerKo: {
-                System.out.println("Error");
+                errorMessagePanel.setText("Ocurrió un error al guardar las respuestas");
+                cardLayout.show(cardPanel, "error");
                 break;
             }
         }
