@@ -51,12 +51,6 @@
             <version>5.11.4</version>
             <scope>test</scope>
         </dependency>
-        <!-- Dependencia para commonmark-java -->
-        <dependency>
-            <groupId>org.commonmark</groupId>
-            <artifactId>commonmark</artifactId>
-            <version>0.18.2</version>
-        </dependency>
     </dependencies>
 
     <build>
