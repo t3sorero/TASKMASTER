@@ -58,6 +58,7 @@ public class ConceptMatchingView extends View {
 
     private ConceptosDefinicionesTOA toa;
     private JLabel errorMessagePanel;
+    private JPanel gameResultPanel;
 
     @Override
     public JPanel build(BuildOptions options) {
@@ -76,7 +77,7 @@ public class ConceptMatchingView extends View {
         JPanel bottomPanel = new JPanel(new BorderLayout(8, 0));
         bottomPanel.setOpaque(false);
         bottomPanel.setBorder(SwingUtils.emptyBorder(16, 0));
-        JPanel gameResultPanel = new JPanel(new GridBagLayout());
+        gameResultPanel = new JPanel(new GridBagLayout());
         gameResultPanel.setOpaque(false);
         GridBagConstraints horizontalConstraints = SwingUtils.horizontalConstraints();
         horizontalConstraints.insets = new Insets(0, 8, 0, 8);

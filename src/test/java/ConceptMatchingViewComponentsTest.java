@@ -14,21 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConceptMatchingViewComponentsTest {
 
     private ConceptMatchingView view;
-    private JFrame frame;
 
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        frame = new JFrame();
-        frame.setContentPane(view.build(new Widget.BuildOptions(frame, new HashMap<>())));
-    }
-    @AfterEach
-    void tearDown() {
-        if (frame != null) {
-            frame.dispose();
-            frame = null;
-        }
-        view = null;
+        view.build(new Widget.BuildOptions(null, new HashMap<>()));
     }
     @Test
     void testGamePanelCreated() {

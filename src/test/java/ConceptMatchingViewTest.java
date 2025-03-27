@@ -22,22 +22,11 @@ import static org.mockito.Mockito.*;
 
 class ConceptMatchingViewTest {
     private ConceptMatchingView view;
-    private JFrame frame;
     private Widget.BuildOptions options;
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        frame = new JFrame();
-        options = new Widget.BuildOptions(frame, new HashMap<>());
-    }
-    @AfterEach
-    void tearDown() {
-        options = null;
-        if (frame != null) {
-            frame.dispose();
-            frame = null;
-        }
-        view = null;
+        options = new Widget.BuildOptions(null, new HashMap<>());
     }
     @Test
     void testBuild() {
