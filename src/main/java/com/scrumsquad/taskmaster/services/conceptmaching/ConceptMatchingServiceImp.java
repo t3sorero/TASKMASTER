@@ -13,7 +13,7 @@ public class ConceptMatchingServiceImp extends ConceptMatchingService {
     private static final int CONCEPTS = 4;
     private static final int DEFINITIONS = 6;
 
-    public ConceptosDefinicionesTOA getGameData(int tema) throws Exception {
+    public ConceptosDefinicionesTOA getGameData(int tema) throws Exception {                
 
         Transaction t = TransactionManager.getInstance().nuevaTransaccion();
         try {
