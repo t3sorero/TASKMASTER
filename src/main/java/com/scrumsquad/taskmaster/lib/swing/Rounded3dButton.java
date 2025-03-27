@@ -211,4 +211,11 @@ public class Rounded3dButton extends JButton {
             prevHover = hover;
         }
     }
+    public boolean isPressed() {
+        return pressed;
+    }
+
+    public int getSideHeight() {
+        return buttonSideHeight;
+    }
 }
