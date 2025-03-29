@@ -23,23 +23,18 @@ class GetTeoriaServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Mockeamos los métodos estáticos
         mockTM = mockStatic(TransactionManager.class);
         mockDF = mockStatic(DAOFactory.class);
 
-        // Creamos mocks de Transaction y TeoriaDAO
         mockTransaction = mock(Transaction.class);
         mockTeoriaDAO = mock(TeoriaDao.class);
 
-        // Simulamos que TransactionManager.getInstance() devuelve un objeto con nuevaTransaccion()
         TransactionManager mockTransactionManager = mock(TransactionManager.class);
         when(mockTransactionManager.nuevaTransaccion()).thenReturn(mockTransaction);
         mockTM.when(TransactionManager::getInstance).thenReturn(mockTransactionManager);
 
-        // Simulamos que DAOFactory.getTeoriaDAO() devuelve nuestro mockTeoriaDAO
         mockDF.when(DAOFactory::getTeoriaDAO).thenReturn(mockTeoriaDAO);
 
-        // Instanciamos el servicio
         service = new GetTeoriaServiceImp();
     }
 
@@ -57,13 +52,10 @@ class GetTeoriaServiceTest {
             int tema = 1;
             String teoriaEsperada = "Teoría de prueba";
 
-            // Simulamos que el DAO devuelve la teoría esperada
             when(mockTeoriaDAO.getTeoria(tema)).thenReturn(teoriaEsperada);
 
-            // Ejecutamos el metodo
             String result = service.getTeoria(tema);
 
-            // Verificamos el flujo correcto
             verify(mockTransaction).start();
             verify(mockTransaction).commit();
             assertEquals(teoriaEsperada, result);
@@ -77,7 +69,7 @@ class GetTeoriaServiceTest {
     void testGetTeoria_Exception() {
         int tema = 1;
 
-        // Simulamos que el DAO lanza una excepción
+        // Simular DAO Excepcion
         try {
             when(mockTeoriaDAO.getTeoria(tema)).thenThrow(new RuntimeException("Error en DAO"));
             // Verificamos que la excepción se propaga y que se hace rollback
