@@ -9,6 +9,7 @@ public class ViewRoutes {
     public static final String student = "/student";
     public static final String conceptMatching = "/conceptMatching";
     public static final String topicsConceptMatching = "/topicsConceptMatching";
+    public static final String topicsTheory = "/topicsTheory";
     public static final String mainMenu = "/mainMenu";
     public static final String teoria = "/teoria";
 }

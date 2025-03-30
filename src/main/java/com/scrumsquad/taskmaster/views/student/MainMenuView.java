@@ -42,9 +42,10 @@ public class MainMenuView extends View {
 
         JButton teoriaButton = createStyledButton("TEORÍA", new Color(173, 216, 230), "/images/teoria.png");
         teoriaButton.addActionListener(e -> {
-            Navigator.getNavigator().to(ViewRoutes.teoria, new HashMap<String, Object>() {{
+            Navigator.getNavigator().to(ViewRoutes.topicsTheory);
+            /*Navigator.getNavigator().to(ViewRoutes.teoria, new HashMap<String, Object>() {{
                 put("tema", 1);
-            }});
+            }});*/
         });
         JButton practicarButton = createStyledButton("PRACTICAR", new Color(255, 150, 120), "/images/ejercicios.png");
         practicarButton.addActionListener(e -> {
