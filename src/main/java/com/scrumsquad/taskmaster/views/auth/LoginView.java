@@ -23,7 +23,6 @@ public class LoginView extends View {
     private FormInput emailField;
     private FormInput passwordField;
     private JButton loginButton;
-    private JButton registerButton;
     private JLabel errorResponseLabel;
 
     @Override
@@ -82,18 +81,6 @@ public class LoginView extends View {
         loginPanel.add(loginButton, loginGbc);
         loginPanel.add(errorResponseLabel, loginGbc);
 
-        // Botón de registro
-        registerButton = new RoundedButton("REGISTRARSE");
-        registerButton.setFont(FontUtils.lato14);
-        registerButton.setBorder(SwingUtils.emptyBorder(0, 12));
-        registerButton.setBackground(AppColors.secondary);
-        registerButton.setForeground(AppColors.secondaryText);
-        registerButton.addActionListener((e) -> {
-            Navigator.getNavigator().offTo(ViewRoutes.register);
-        });
-
-        panel.add(registerButton, gbc);
-
         emailField.requestFocus();
 
         return panel;
@@ -138,7 +125,6 @@ public class LoginView extends View {
 
     private void setLoginEnabled(boolean enabled) {
         loginButton.setEnabled(enabled);
-        registerButton.setEnabled(enabled);
     }
 
     private void sendLogin() {
@@ -170,7 +156,7 @@ public class LoginView extends View {
             case CommandName.loginOk -> {
                 setLoginEnabled(true);
                 // TODO lógica para enviar a la vista de profesor o alumno
-                Navigator.getNavigator().to(ViewRoutes.student);
+                Navigator.getNavigator().to(ViewRoutes.mainMenu);
             }
             case CommandName.loginKo -> {
                 setLoginEnabled(true);
