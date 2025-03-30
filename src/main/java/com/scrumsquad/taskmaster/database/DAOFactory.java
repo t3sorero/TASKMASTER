@@ -4,6 +4,8 @@ import com.scrumsquad.taskmaster.database.concepto.ConceptoDAO;
 import com.scrumsquad.taskmaster.database.concepto.ConceptoDAOImp;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDAO;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDAOImp;
+import com.scrumsquad.taskmaster.database.login.LoginDAO;
+import com.scrumsquad.taskmaster.database.login.LoginDAOImp;
 
 public class DAOFactory {
 
@@ -16,5 +18,7 @@ public class DAOFactory {
     public static DefinicionDAO getDefinicionesDAO() {
         return new DefinicionDAOImp();
     }
+
+    public static LoginDAO getLoginDAO() {return new LoginDAOImp();}
 
 }
