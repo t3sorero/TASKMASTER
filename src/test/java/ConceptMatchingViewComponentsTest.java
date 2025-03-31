@@ -1,19 +1,27 @@
+import com.scrumsquad.taskmaster.lib.Widget;
 import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
+import com.scrumsquad.taskmaster.lib.Widget.BuildOptions;
 import com.scrumsquad.taskmaster.views.AppColors;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.ConceptMatchingView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ConceptMatchingViewComponentsTest {
     ConceptMatchingView view;
-
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        view.build(null);
+        BuildOptions options = mock(BuildOptions.class);
+        when(options.arguments()).thenReturn(new HashMap<>());
+        view.build(options);
     }
 
     @Test

@@ -4,12 +4,14 @@ import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDTO;
+import com.scrumsquad.taskmaster.lib.Widget.BuildOptions;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.ConceptMatchingView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import javax.swing.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +23,9 @@ class ConceptMatchingViewTest {
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        view.build(null);
+        BuildOptions options = mock(BuildOptions.class);
+        when(options.arguments()).thenReturn(new HashMap<>());
+        view.build(options);
     }
     @Test
     void testBuild() {
