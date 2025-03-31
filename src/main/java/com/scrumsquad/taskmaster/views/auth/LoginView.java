@@ -152,20 +152,21 @@ public class LoginView extends View {
     @Override
     public void update(Context ctx) {
         if (ctx == null) return;
+
         switch (ctx.getCommandName()) {
             case CommandName.loginOk -> {
                 setLoginEnabled(true);
-                // TODO lógica para enviar a la vista de profesor o alumno
                 Navigator.getNavigator().to(ViewRoutes.mainMenu);
             }
             case CommandName.loginKo -> {
                 setLoginEnabled(true);
                 String msg = "Ocurrió un error al iniciar sesión";
-                if (ctx.getArguments() != null) {
-                    if (ctx.getArguments().containsKey("credentials")) {
-                        msg = "Usuario o contraseña incorrectos";
-                    }
+
+                Map<String, Object> args = ctx.getArguments();
+                if (args != null && args.containsKey("credentials")) {
+                    msg = "Usuario o contraseña incorrectos";
                 }
+
                 errorResponseLabel.setText(msg);
                 errorResponseLabel.setVisible(true);
                 emailField.requestFocus();
