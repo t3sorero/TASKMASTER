@@ -32,11 +32,8 @@ class TopicsConceptMatchingViewTest {
     }
     @Test
     void testBuild() {
-        JPanel panel = view.build(null);
-        assertNotNull(panel);
-        Component[] conts = panel.getComponents();
-        assertTrue(conts.length > 0);
-        JPanel panelContenedor = (JPanel) conts[0];
+        JPanel panelContenedor = view.build(dummyOptions());
+        assertNotNull(panelContenedor);
         assertEquals(AppColors.secondary40, panelContenedor.getBackground());
         Component[] comps = panelContenedor.getComponents();
         assertTrue(comps.length > 0);
@@ -53,13 +50,12 @@ class TopicsConceptMatchingViewTest {
         try (MockedStatic<Navigator> navMock = mockStatic(Navigator.class)) {
             Navigator navigator = mock(Navigator.class);
             navMock.when(Navigator::getNavigator).thenReturn(navigator);
-            JPanel panel = view.build(dummyOptions());
-            JPanel panelContenedor = (JPanel) panel.getComponent(0);
+            JPanel panelContenedor = view.build(dummyOptions());
             JPanel panelBotones = (JPanel) panelContenedor.getComponent(0);
             Rounded3dButton btn = (Rounded3dButton) panelBotones.getComponent(0);
             btn.doClick();
             verify(navigator).to((String) eq(ViewRoutes.conceptMatching), (Map<String, Object>) argThat(arg ->
-                    arg instanceof Map && ((Map<?, ?>)arg).get("tema").equals(1)
+                    arg instanceof Map && ((Map<?, ?>) arg).get("tema").equals(1)
             ));
         }
     }

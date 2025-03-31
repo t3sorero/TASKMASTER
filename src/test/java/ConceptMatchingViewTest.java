@@ -20,28 +20,22 @@ import static org.mockito.Mockito.*;
 
 class ConceptMatchingViewTest {
     ConceptMatchingView view;
+
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        BuildOptions options = mock(BuildOptions.class);
-        when(options.arguments()).thenReturn(new HashMap<>());
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
         view.build(options);
     }
+
     @Test
     void testBuild() {
-        JPanel panel = view.build(null);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
+        JPanel panel = view.build(options);
         assertNotNull(panel);
         assertTrue(panel.getComponentCount() > 0);
     }
-    @Test
-    void testOnLoad() {
-        try (MockedStatic<AppController> appMock = mockStatic(AppController.class)) {
-            AppController controller = mock(AppController.class);
-            appMock.when(AppController::getInstance).thenReturn(controller);
-            view.onLoad();
-            verify(controller).action(any());
-        }
-    }
+
     @Test
     void testUpdate_GetDataOk() {
         List<ConceptoDTO> conceptos = List.of(new ConceptoDTO(1, "C1"), new ConceptoDTO(2, "C2"));
@@ -49,12 +43,14 @@ class ConceptMatchingViewTest {
         ConceptosDefinicionesTOA toa = new ConceptosDefinicionesTOA(conceptos, definiciones);
         Context ctx = new Context(CommandName.conceptMatchingGetDataOk);
         ctx.setArgument("toa", toa);
-        view.build(null);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
+        view.build(options);
         view.update(ctx);
         JPanel buttonsPanel = TestUtils.getPrivateField(view, "buttonsConceptosPanel", JPanel.class);
         assertNotNull(buttonsPanel);
         assertEquals(conceptos.size(), buttonsPanel.getComponentCount());
     }
+
     @Test
     void testUpdate_CheckAnswerOk() {
         List<ConceptoDTO> conceptos = List.of(new ConceptoDTO(1, "C1"), new ConceptoDTO(2, "C2"));
@@ -62,9 +58,9 @@ class ConceptMatchingViewTest {
         ConceptosDefinicionesTOA toa = new ConceptosDefinicionesTOA(conceptos, definiciones);
         Context ctxData = new Context(CommandName.conceptMatchingGetDataOk);
         ctxData.setArgument("toa", toa);
-        view.build(null);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
+        view.build(options);
         view.update(ctxData);
-        // Simulate mapping: index 0 -> 0, index 1 -> 1
         TestUtils.setPrivateField(view, "conceptoMap", Map.of(0, 0, 1, 1));
         Map<Integer, Boolean> feedback = Map.of(1, true, 2, false);
         Context ctxFeedback = new Context(CommandName.conceptMatchingCheckAnswerOk);
@@ -81,6 +77,8 @@ class ConceptMatchingViewTest {
         try (MockedStatic<AppController> appMock = mockStatic(AppController.class)) {
             AppController controller = mock(AppController.class);
             appMock.when(AppController::getInstance).thenReturn(controller);
+            BuildOptions options = new BuildOptions(null, new HashMap<>());
+            view.build(options);
             JButton sendButton = TestUtils.getPrivateField(view, "sendButton", JButton.class);
             sendButton.doClick();
             view.onLoad();
@@ -95,7 +93,8 @@ class ConceptMatchingViewTest {
         ConceptosDefinicionesTOA toa = new ConceptosDefinicionesTOA(conceptos, definiciones);
         Context ctx = new Context(CommandName.conceptMatchingGetDataOk);
         ctx.setArgument("toa", toa);
-        view.build(null);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
+        view.build(options);
         view.update(ctx);
         JPanel conceptosPanel = TestUtils.getPrivateField(view, "buttonsConceptosPanel", JPanel.class);
         JPanel definicionesPanel = TestUtils.getPrivateField(view, "buttonsDefinicionesPanel", JPanel.class);
@@ -104,5 +103,6 @@ class ConceptMatchingViewTest {
         assertEquals(conceptos.size(), conceptosPanel.getComponentCount());
         assertEquals(definiciones.size(), definicionesPanel.getComponentCount());
     }
+
 
 }
