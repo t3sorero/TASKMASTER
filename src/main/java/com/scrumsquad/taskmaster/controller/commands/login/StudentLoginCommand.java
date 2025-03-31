@@ -3,7 +3,7 @@ package com.scrumsquad.taskmaster.controller.commands.login;
 import com.scrumsquad.taskmaster.controller.commands.Command;
 import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
-import services.login.LoginService;
+import com.scrumsquad.taskmaster.services.login.LoginService;
 
 public class StudentLoginCommand implements Command {
 

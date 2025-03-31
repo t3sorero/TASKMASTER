@@ -1,4 +1,4 @@
-package services.login;
+package com.scrumsquad.taskmaster.services.login;
 
 public abstract class LoginService {
     private static LoginService instance;

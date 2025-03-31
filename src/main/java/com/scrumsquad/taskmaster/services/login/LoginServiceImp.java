@@ -1,4 +1,4 @@
-package services.login;
+package com.scrumsquad.taskmaster.services.login;
 
 import com.scrumsquad.taskmaster.database.DAOFactory;
 import com.scrumsquad.taskmaster.lib.transactions.Transaction;

@@ -1,4 +1,4 @@
-package com.scrumsquad.taskmaster.views.student;
+package com.scrumsquad.taskmaster.views.auth;
 
 import com.scrumsquad.taskmaster.controller.Navigator;
 import com.scrumsquad.taskmaster.controller.commands.Context;
@@ -10,7 +10,6 @@ import com.scrumsquad.taskmaster.views.ViewRoutes;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class MainMenuView extends View {
 
