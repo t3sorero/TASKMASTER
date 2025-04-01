@@ -130,7 +130,7 @@ public class AppController {
 
             private static final String backButtonBlackPath = "/images/back-icon-black.png";
             private static final String backButtonWhitePath = "/images/back-icon-white.png";
-            private static final Color defaultHeaderColor = AppColors.primary;
+            private static final Color defaultHeaderColor = AppColors.defaultColor;
             private static final Color defaultHeaderTextColor = CommonUtils.calculateTextColor(
                     AppColors.primary,
                     Color.white,

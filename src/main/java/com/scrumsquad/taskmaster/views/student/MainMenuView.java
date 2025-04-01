@@ -56,13 +56,6 @@ public class MainMenuView extends View {
         buttonPanel.add(practicarButton);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
 
-        // Eslogan
-        JLabel sloganLabel = new JLabel("Si no puedes con la presión, abandona", SwingConstants.CENTER);
-        sloganLabel.setFont(new Font("SansSerif", Font.ITALIC, 14));
-        sloganLabel.setForeground(Color.WHITE);
-        sloganLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        mainPanel.add(sloganLabel, BorderLayout.SOUTH);
-
         return mainPanel;
     }
 

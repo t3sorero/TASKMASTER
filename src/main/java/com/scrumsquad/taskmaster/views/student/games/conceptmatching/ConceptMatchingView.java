@@ -66,13 +66,13 @@ public class ConceptMatchingView extends View {
 
         JPanel panel = new JPanel(new GridBagLayout());
         mainPanel = panel;
-        panel.setBackground(AppColors.secondary40);
+        panel.setBackground(AppColors.secondary);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
 
         gamePanel = new RoundedPanel(16);
         gamePanel.setLayout(new BorderLayout());
         gamePanel.setPreferredSize(new Dimension(width, height));
-        gamePanel.setBackground(AppColors.secondary);
+        gamePanel.setBackground(AppColors.secondaryLight);
 
         JPanel bottomPanel = new JPanel(new BorderLayout(8, 0));
         bottomPanel.setOpaque(false);
