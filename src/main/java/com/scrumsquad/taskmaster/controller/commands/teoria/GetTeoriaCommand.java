@@ -11,6 +11,9 @@ public class GetTeoriaCommand implements Command {
         try {
             var teoria = GetTeoriaService.getInstance().getTeoria((int) ctx.getArguments().get("tema"));
             if (teoria == null) {
+                return new Context(CommandName.teoriaGetDataKo);
+            } else if (teoria.equals("-1")) {
+                ctx.getArguments().put("teoria", "No hay teoria para este tema");
                 return new Context(CommandName.teoriaGetDataKo, ctx.getArguments());
             }
             ctx.getArguments().put("teoria", teoria);

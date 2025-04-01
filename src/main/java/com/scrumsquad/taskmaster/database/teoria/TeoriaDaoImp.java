@@ -1,20 +1,15 @@
 package com.scrumsquad.taskmaster.database.teoria;
 
-import com.scrumsquad.taskmaster.database.DBData;
-import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
 import com.scrumsquad.taskmaster.lib.transactions.Transaction;
 import com.scrumsquad.taskmaster.lib.transactions.TransactionManager;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TeoriaDaoImp implements TeoriaDao {
     @Override
-    public String getTeoria(int tema) throws Exception {
+    public String getTeoria(int tema) {
         String result = null;
         String query = "SELECT * FROM teoria WHERE tema = ?";
         Connection con = null;
@@ -27,6 +22,8 @@ public class TeoriaDaoImp implements TeoriaDao {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 result = rs.getString("texto");
+            } else {
+                result = "-1";
             }
             rs.close();
             ps.close();

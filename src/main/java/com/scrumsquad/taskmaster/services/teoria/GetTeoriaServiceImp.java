@@ -12,6 +12,10 @@ public class GetTeoriaServiceImp extends GetTeoriaService{
             t.start();
             var daoTeoria = DAOFactory.getTeoriaDAO();
             String teoria = daoTeoria.getTeoria(tema);
+            if (teoria == null) {
+                t.rollback();
+                return null;
+            }
             t.commit();
             return teoria;
         }catch(Exception e) {
