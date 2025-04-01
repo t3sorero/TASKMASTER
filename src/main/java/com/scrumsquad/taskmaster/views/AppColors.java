@@ -13,10 +13,12 @@ public class AppColors {
 
     public static final Color text = new Color(0x020E06);
     public static final Color background = new Color(0xF0FDF4);
-    public static final Color primary = new Color(0x22E55F);
-    public static final Color secondary = new Color(0x7CB9F0);
+    public static final Color primary = new Color(0x20D65A);
+    public static final Color secondary = new Color(0x6C7475);
     public static final Color accent = new Color(0x5971EC);
 
+    public static final Color defaultColor = new Color(0xD0DBD4);
+    public static final Color secondaryLight = new Color(0xA5B2B4);
     public static final Color error = new Color(0xed4337);
     public static final Color exit = new Color(0xe30000);
 

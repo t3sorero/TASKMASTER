@@ -4,11 +4,9 @@ import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.concepto.ConceptoDTO;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDTO;
-import com.scrumsquad.taskmaster.lib.View;
-import com.scrumsquad.taskmaster.lib.Widget;
+import com.scrumsquad.taskmaster.lib.Widget.BuildOptions;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.ConceptMatchingView;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -21,29 +19,23 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class ConceptMatchingViewTest {
-    private ConceptMatchingView view;
-    private Widget.BuildOptions options;
+    ConceptMatchingView view;
+
     @BeforeEach
     void setUp() {
         view = new ConceptMatchingView();
-        options = new Widget.BuildOptions(null, new HashMap<>());
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
+        view.build(options);
     }
+
     @Test
     void testBuild() {
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
         JPanel panel = view.build(options);
         assertNotNull(panel);
         assertTrue(panel.getComponentCount() > 0);
     }
-    @Test
-    void testOnLoad() {
-        view.build(options);
-        try (MockedStatic<AppController> appMock = mockStatic(AppController.class)) {
-            AppController controller = mock(AppController.class);
-            appMock.when(AppController::getInstance).thenReturn(controller);
-            view.onLoad();
-            verify(controller).action(any());
-        }
-    }
+
     @Test
     void testUpdate_GetDataOk() {
         List<ConceptoDTO> conceptos = List.of(new ConceptoDTO(1, "C1"), new ConceptoDTO(2, "C2"));
@@ -51,12 +43,14 @@ class ConceptMatchingViewTest {
         ConceptosDefinicionesTOA toa = new ConceptosDefinicionesTOA(conceptos, definiciones);
         Context ctx = new Context(CommandName.conceptMatchingGetDataOk);
         ctx.setArgument("toa", toa);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
         view.build(options);
         view.update(ctx);
         JPanel buttonsPanel = TestUtils.getPrivateField(view, "buttonsConceptosPanel", JPanel.class);
         assertNotNull(buttonsPanel);
         assertEquals(conceptos.size(), buttonsPanel.getComponentCount());
     }
+
     @Test
     void testUpdate_CheckAnswerOk() {
         List<ConceptoDTO> conceptos = List.of(new ConceptoDTO(1, "C1"), new ConceptoDTO(2, "C2"));
@@ -64,9 +58,9 @@ class ConceptMatchingViewTest {
         ConceptosDefinicionesTOA toa = new ConceptosDefinicionesTOA(conceptos, definiciones);
         Context ctxData = new Context(CommandName.conceptMatchingGetDataOk);
         ctxData.setArgument("toa", toa);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
         view.build(options);
         view.update(ctxData);
-        // Simulate mapping: index 0 -> 0, index 1 -> 1
         TestUtils.setPrivateField(view, "conceptoMap", Map.of(0, 0, 1, 1));
         Map<Integer, Boolean> feedback = Map.of(1, true, 2, false);
         Context ctxFeedback = new Context(CommandName.conceptMatchingCheckAnswerOk);
@@ -80,10 +74,11 @@ class ConceptMatchingViewTest {
 
     @Test
     void testSendButtonAction() {
-        view.build(options);
         try (MockedStatic<AppController> appMock = mockStatic(AppController.class)) {
             AppController controller = mock(AppController.class);
             appMock.when(AppController::getInstance).thenReturn(controller);
+            BuildOptions options = new BuildOptions(null, new HashMap<>());
+            view.build(options);
             JButton sendButton = TestUtils.getPrivateField(view, "sendButton", JButton.class);
             sendButton.doClick();
             view.onLoad();
@@ -98,6 +93,7 @@ class ConceptMatchingViewTest {
         ConceptosDefinicionesTOA toa = new ConceptosDefinicionesTOA(conceptos, definiciones);
         Context ctx = new Context(CommandName.conceptMatchingGetDataOk);
         ctx.setArgument("toa", toa);
+        BuildOptions options = new BuildOptions(null, new HashMap<>());
         view.build(options);
         view.update(ctx);
         JPanel conceptosPanel = TestUtils.getPrivateField(view, "buttonsConceptosPanel", JPanel.class);
@@ -107,5 +103,6 @@ class ConceptMatchingViewTest {
         assertEquals(conceptos.size(), conceptosPanel.getComponentCount());
         assertEquals(definiciones.size(), definicionesPanel.getComponentCount());
     }
+
 
 }

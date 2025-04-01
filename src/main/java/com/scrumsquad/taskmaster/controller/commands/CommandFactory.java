@@ -4,6 +4,7 @@ import com.scrumsquad.taskmaster.controller.commands.auth.LoginCommand;
 import com.scrumsquad.taskmaster.controller.commands.auth.RegisterCommand;
 import com.scrumsquad.taskmaster.controller.commands.conceptmatching.ConceptMatchingCheckAnswerCommand;
 import com.scrumsquad.taskmaster.controller.commands.conceptmatching.ConceptMatchingGetDataCommand;
+import com.scrumsquad.taskmaster.controller.commands.teoria.GetTeoriaCommand;
 
 public class CommandFactory {
     private CommandFactory() {
@@ -15,6 +16,7 @@ public class CommandFactory {
             case CommandName.register -> new RegisterCommand();
             case CommandName.conceptMatchingGetData -> new ConceptMatchingGetDataCommand();
             case CommandName.conceptMatchingCheckAnswer -> new ConceptMatchingCheckAnswerCommand();
+            case CommandName.teoriaGetData -> new GetTeoriaCommand();
             default -> null;
         };
     }

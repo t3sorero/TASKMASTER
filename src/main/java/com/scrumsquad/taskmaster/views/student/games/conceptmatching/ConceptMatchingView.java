@@ -30,9 +30,11 @@ public class ConceptMatchingView extends View {
     private final Map<Integer, Integer> conceptoMap = new HashMap<>();
     private final Map<Integer, Integer> definicionMap = new HashMap<>();
 
+    private JPanel mainPanel;
     private JPanel cardPanel;
     private CardLayout cardLayout;
     private JPanel gamePanel;
+    private JPanel gameResultPanel;
     private JPanel buttonsConceptosPanel;
     private JPanel buttonsDefinicionesPanel;
     private final java.util.List<JButton> conceptosButtons = new ArrayList<>();
@@ -58,21 +60,20 @@ public class ConceptMatchingView extends View {
 
     private ConceptosDefinicionesTOA toa;
     private JLabel errorMessagePanel;
-    private JPanel gameResultPanel;
 
     @Override
     public JPanel build(BuildOptions options) {
-
         tema = (int) options.arguments().getOrDefault("tema", 1);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(AppColors.secondary40);
+        mainPanel = panel;
+        panel.setBackground(AppColors.secondary);
         GridBagConstraints constraints = SwingUtils.verticalConstraints();
 
         gamePanel = new RoundedPanel(16);
         gamePanel.setLayout(new BorderLayout());
         gamePanel.setPreferredSize(new Dimension(width, height));
-        gamePanel.setBackground(AppColors.secondary);
+        gamePanel.setBackground(AppColors.secondaryLight);
 
         JPanel bottomPanel = new JPanel(new BorderLayout(8, 0));
         bottomPanel.setOpaque(false);

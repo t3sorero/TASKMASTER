@@ -20,5 +20,8 @@ public class CommandName {
     public static final String conceptMatchingCheckAnswerOk = "conceptMatchingCheckAnswerOk";
     public static final String conceptMatchingCheckAnswerKo = "conceptMatchingCheckAnswerKo";
 
+    public static final String teoriaGetData = "teoriaGetData";
+    public static final String teoriaGetDataOk = "teoriaGetDataOk";
+    public static final String teoriaGetDataKo = "teoriaGetDataKo";
 
 }
