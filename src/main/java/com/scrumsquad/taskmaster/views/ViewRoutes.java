@@ -10,4 +10,5 @@ public class ViewRoutes {
     public static final String topicsConceptMatching = "/topicsConceptMatching";
     public static final String topicsTheory = "/topicsTheory";
     public static final String mainMenu = "/mainMenu";
+    public static final String selectExRes = "/selectExerciseResult";
 }
