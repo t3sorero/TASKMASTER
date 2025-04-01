@@ -15,6 +15,9 @@ import java.util.*;
 
 public class TopicsTheoryView extends View {
 
+    private Rounded3dButton button1;
+    private Rounded3dButton button2;
+    private Rounded3dButton button3;
 
     @Override
     public JPanel build(BuildOptions options) {
@@ -22,9 +25,9 @@ public class TopicsTheoryView extends View {
         JPanel panelBotones = new JPanel(new GridLayout(3, 1, 40, 40));
         panelBotones.setOpaque(false);
 
-        Rounded3dButton button1 = createButton(1, "Equipos de trabajo", ViewRoutes.teoria);
-        Rounded3dButton button2 = createButton(2, "Metodologías de Gestión de Proyectos", ViewRoutes.teoria);
-        Rounded3dButton button3 = createButton(3, "Scrum", ViewRoutes.teoria);
+        button1 = createButton(1, "Equipos de trabajo", ViewRoutes.teoria);
+        button2 = createButton(2, "Metodologías de Gestión de Proyectos", ViewRoutes.teoria);
+        button3 = createButton(3, "Scrum", ViewRoutes.teoria);
 
         panelBotones.add(button1);
         panelBotones.add(button2);

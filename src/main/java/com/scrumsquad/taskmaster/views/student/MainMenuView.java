@@ -15,6 +15,8 @@ import java.util.HashMap;
 public class MainMenuView extends View {
 
     private JPanel mainPanel;
+    private JButton teoriaButton;
+    private JButton practicarButton;
 
     @Override
     public JPanel build(BuildOptions options) {
@@ -40,14 +42,14 @@ public class MainMenuView extends View {
         buttonPanel.setLayout(new GridLayout(1, 2, 40, 0));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        JButton teoriaButton = createStyledButton("TEORÍA", new Color(173, 216, 230), "/images/teoria.png");
+        teoriaButton = createStyledButton("TEORÍA", new Color(173, 216, 230), "/images/teoria.png");
         teoriaButton.addActionListener(e -> {
             Navigator.getNavigator().to(ViewRoutes.topicsTheory);
             /*Navigator.getNavigator().to(ViewRoutes.teoria, new HashMap<String, Object>() {{
                 put("tema", 1);
             }});*/
         });
-        JButton practicarButton = createStyledButton("PRACTICAR", new Color(255, 150, 120), "/images/ejercicios.png");
+        practicarButton = createStyledButton("PRACTICAR", new Color(255, 150, 120), "/images/ejercicios.png");
         practicarButton.addActionListener(e -> {
             Navigator.getNavigator().to(ViewRoutes.topicsConceptMatching);
         });        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 0));
