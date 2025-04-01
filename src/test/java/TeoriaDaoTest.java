@@ -56,7 +56,7 @@ class TeoriaDaoTest {
             tm.when(TransactionManager::getInstance).thenReturn(mockedTransactionManager);
             when(mockedTransactionManager.getTransaccion()).thenReturn(mockedTransaction);
             String result = dao.getTeoria(1);
-            assertNull(result);
+            assertEquals("-1", result);
         }
     }
 

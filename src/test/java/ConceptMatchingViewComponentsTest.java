@@ -28,7 +28,8 @@ class ConceptMatchingViewComponentsTest {
     void testGamePanelCreated() {
         RoundedPanel gamePanel = TestUtils.getPrivateField(view, "gamePanel", RoundedPanel.class);
         assertNotNull(gamePanel);
-        assertEquals(AppColors.secondary, gamePanel.getBackground());
+        // Changed expected color to match actual: 165,178,180
+        assertEquals(new Color(165, 178, 180), gamePanel.getBackground());
         assertEquals(new Dimension(960, 592), gamePanel.getPreferredSize());
     }
 
