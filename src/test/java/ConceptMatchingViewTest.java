@@ -35,7 +35,6 @@ class ConceptMatchingViewTest {
         assertNotNull(panel);
         assertTrue(panel.getComponentCount() > 0);
     }
-
     @Test
     void testUpdate_GetDataOk() {
         List<ConceptoDTO> conceptos = List.of(new ConceptoDTO(1, "C1"), new ConceptoDTO(2, "C2"));
@@ -50,7 +49,6 @@ class ConceptMatchingViewTest {
         assertNotNull(buttonsPanel);
         assertEquals(conceptos.size(), buttonsPanel.getComponentCount());
     }
-
     @Test
     void testUpdate_CheckAnswerOk() {
         List<ConceptoDTO> conceptos = List.of(new ConceptoDTO(1, "C1"), new ConceptoDTO(2, "C2"));
@@ -103,6 +101,5 @@ class ConceptMatchingViewTest {
         assertEquals(conceptos.size(), conceptosPanel.getComponentCount());
         assertEquals(definiciones.size(), definicionesPanel.getComponentCount());
     }
-
 
 }
