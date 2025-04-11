@@ -61,7 +61,7 @@ class TopicsConceptMatchingViewTest {
             JPanel panelBotones = (JPanel) panelContenedor.getComponent(0);
             Rounded3dButton btn = (Rounded3dButton) panelBotones.getComponent(0);
             btn.doClick();
-            verify(navigator).to((String) eq(ViewRoutes.conceptMatching), (Map<String, Object>) argThat(arg ->
+            verify(navigator).to((String) eq(ViewRoutes.gameSelection), (Map<String, Object>) argThat(arg ->
                     arg instanceof Map && ((Map<?, ?>) arg).get("tema").equals(1)
             ));
         }
