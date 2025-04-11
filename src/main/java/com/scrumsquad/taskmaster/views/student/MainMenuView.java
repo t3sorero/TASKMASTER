@@ -48,21 +48,15 @@ public class MainMenuView extends View {
                 put("tema", 1);
             }});*/
         });
-        practicarButton = createStyledButton("PRACTICAR", new Color(255, 150, 120), "/images/ejercicios.png");
+        practicarButton = createStyledButton("PRÁCTICA", new Color(255, 150, 120), "/images/ejercicios.png");
         practicarButton.addActionListener(e -> {
-            Navigator.getNavigator().to(ViewRoutes.topicsConceptMatching);
+            Navigator.getNavigator().to(ViewRoutes.topics);
         });        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 0));
 
         buttonPanel.add(teoriaButton);
         buttonPanel.add(practicarButton);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
 
-        // Eslogan
-        JLabel sloganLabel = new JLabel("Si no puedes con la presión, abandona", SwingConstants.CENTER);
-        sloganLabel.setFont(new Font("SansSerif", Font.ITALIC, 14));
-        sloganLabel.setForeground(Color.WHITE);
-        sloganLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        mainPanel.add(sloganLabel, BorderLayout.SOUTH);
 
         return mainPanel;
     }
