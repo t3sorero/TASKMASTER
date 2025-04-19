@@ -30,6 +30,9 @@ public abstract class View extends Widget {
     public void onLoad() {
     }
 
+    public void onDispose() {
+    }
+
     public static class ViewOptions {
         private String headerTitle;
         private Color headerColor;
