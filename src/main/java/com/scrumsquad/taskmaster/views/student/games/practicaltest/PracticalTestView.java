@@ -1,4 +1,4 @@
-package com.scrumsquad.taskmaster.views.student.practicaltest;
+package com.scrumsquad.taskmaster.views.student.games.practicaltest;
 
 import com.scrumsquad.taskmaster.controller.Navigator;
 import com.scrumsquad.taskmaster.controller.commands.Context;
@@ -23,27 +23,40 @@ public class PracticalTestView extends View {
     @Override
     public JPanel build(BuildOptions options) {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(AppColors.secondaryLight);
+        mainPanel.setBackground(AppColors.secondary);
 
+        // Título llamativo
+        String nombreTema = "TEMA " + options.arguments().getOrDefault("tema", "1");
+        JLabel tituloLabel = new JLabel("TEST PRÁCTICO - " + nombreTema.toUpperCase());
+        tituloLabel.setFont(FontUtils.lato30);
+        tituloLabel.setForeground(AppColors.text);
+        tituloLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        tituloLabel.setBorder(BorderFactory.createEmptyBorder(24, 0, 24, 0));
+
+        mainPanel.add(tituloLabel, BorderLayout.NORTH);
+
+
+        // Panel con preguntas
         questionsPanel = new JPanel();
         questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
-        questionsPanel.setBackground(AppColors.secondaryLight);
+        questionsPanel.setBackground(AppColors.secondary);
+
         JScrollPane scrollPane = new JScrollPane(questionsPanel);
-        scrollPane.setPreferredSize(new Dimension(800, 480));
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setPreferredSize(new Dimension(960, 480));
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         loadQuestions();
 
-        // Panel inferior con resultados y botones
+        // Panel inferior
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setOpaque(false);
+        bottomPanel.setBackground(AppColors.secondaryLight);
         bottomPanel.setBorder(SwingUtils.emptyBorder(16, 32));
 
-        // Resultados (correctos/incorrectos)
-        JPanel resultPanel = new JPanel();
+        // Resultados (iconos correctos/incorrectos)
+        JPanel resultPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 0));
         resultPanel.setOpaque(false);
-        resultPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 16, 0));
 
         JLabel correctIcon = new JLabel(new ImageIcon(getClass().getResource("/images/good_icon.png")));
         correctNumberLabel = new JLabel("0");
@@ -60,22 +73,22 @@ public class PracticalTestView extends View {
         resultPanel.add(incorrectIcon);
         resultPanel.add(incorrectNumberLabel);
 
-        // Botón de salir
+        // Botones
+        JButton submitButton = new JButton("ENVIAR RESPUESTAS");
+        submitButton.setFont(FontUtils.lato16);
+        submitButton.setBackground(AppColors.primary);
+        submitButton.setForeground(AppColors.primaryText);
+        submitButton.setFocusPainted(false);
+        submitButton.setPreferredSize(new Dimension(200, 36));
+        submitButton.addActionListener(e -> checkAnswers());
+
         JButton exitButton = new JButton("SALIR");
-        exitButton.setFont(FontUtils.lato14);
+        exitButton.setFont(FontUtils.lato16);
         exitButton.setBackground(AppColors.primary);
         exitButton.setForeground(AppColors.primaryText);
         exitButton.setFocusPainted(false);
         exitButton.setPreferredSize(new Dimension(120, 36));
         exitButton.addActionListener(e -> Navigator.getNavigator().back());
-
-        JButton submitButton = new JButton("ENVIAR RESPUESTAS");
-        submitButton.setFont(FontUtils.lato14);
-        submitButton.setBackground(AppColors.primary);
-        submitButton.setForeground(AppColors.primaryText);
-        submitButton.setFocusPainted(false);
-        submitButton.setPreferredSize(new Dimension(180, 36));
-        submitButton.addActionListener(e -> checkAnswers());
 
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 0));
         buttonsPanel.setOpaque(false);
@@ -84,8 +97,6 @@ public class PracticalTestView extends View {
 
         bottomPanel.add(resultPanel, BorderLayout.WEST);
         bottomPanel.add(buttonsPanel, BorderLayout.EAST);
-
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         return mainPanel;
@@ -96,7 +107,6 @@ public class PracticalTestView extends View {
         answerFields.clear();
         resultIcons.clear();
 
-        // Simulamos 10 preguntas
         String[] preguntas = {
                 "¿Qué es un equipo de trabajo?",
                 "¿Qué papel tiene un coordinador?",
@@ -110,56 +120,45 @@ public class PracticalTestView extends View {
                 "¿Qué se hace en una Daily Meeting?"
         };
 
-        // Simulamos las respuestas correctas
-        String[] respuestas = {
-                "Conjunto de personas con objetivos comunes",
-                "Organiza y guía al equipo",
-                "Resultado superior al trabajo individual",
-                "Mejor rendimiento y comunicación",
-                "Marco de trabajo flexible y adaptativo",
-                "Facilitador del proceso Scrum",
-                "Tablero Kanban o herramientas como Jira",
-                "Reunión para mejorar el proceso",
-                "Producto mínimo viable",
-                "Compartir avances y plan diario"
-        };
-
         for (int i = 0; i < preguntas.length; i++) {
             JPanel preguntaPanel = new JPanel(new BorderLayout());
             preguntaPanel.setBackground(AppColors.secondaryLight);
-            preguntaPanel.setBorder(SwingUtils.emptyBorder(16, 0));
-            preguntaPanel.setPreferredSize(new Dimension(700, 72));
+            preguntaPanel.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createEmptyBorder(12, 24, 12, 24),
+                    BorderFactory.createLineBorder(AppColors.secondary, 2)
+            ));
+            preguntaPanel.setMaximumSize(new Dimension(900, 100));
 
-            JLabel preguntaLabel = new JLabel((i + 1) + ". " + preguntas[i]);
-            preguntaLabel.setFont(FontUtils.lato14);
-            preguntaLabel.setPreferredSize(new Dimension(400, 24));
+            JLabel label = new JLabel((i + 1) + ". " + preguntas[i]);
+            label.setFont(FontUtils.lato20);
+            label.setForeground(AppColors.text);
 
-            JTextField respuestaField = new JTextField();
-            respuestaField.setFont(FontUtils.lato14);
+            JTextField textField = new JTextField();
+            textField.setFont(FontUtils.lato16);
 
-            JLabel iconLabel = new JLabel();
-            iconLabel.setPreferredSize(new Dimension(32, 32));
+            JLabel icon = new JLabel();
+            icon.setPreferredSize(new Dimension(32, 32));
 
-            answerFields.add(respuestaField);
-            resultIcons.add(iconLabel);
+            answerFields.add(textField);
+            resultIcons.add(icon);
 
             JPanel respuestaPanel = new JPanel(new BorderLayout(8, 0));
             respuestaPanel.setOpaque(false);
-            respuestaPanel.add(respuestaField, BorderLayout.CENTER);
-            respuestaPanel.add(iconLabel, BorderLayout.EAST);
+            respuestaPanel.add(textField, BorderLayout.CENTER);
+            respuestaPanel.add(icon, BorderLayout.EAST);
 
-            preguntaPanel.add(preguntaLabel, BorderLayout.NORTH);
+            preguntaPanel.add(label, BorderLayout.NORTH);
             preguntaPanel.add(respuestaPanel, BorderLayout.SOUTH);
 
             questionsPanel.add(preguntaPanel);
+            questionsPanel.add(Box.createVerticalStrut(12));
         }
 
         questionsPanel.revalidate();
         questionsPanel.repaint();
     }
 
-    private void checkAnswers() {
-        // Simulamos las respuestas correctas
+    public void checkAnswers() {
         String[] respuestasCorrectas = {
                 "Conjunto de personas con objetivos comunes",
                 "Organiza y guía al equipo",
@@ -196,11 +195,11 @@ public class PracticalTestView extends View {
 
     @Override
     public void update(Context ctx) {
-        // cuando se conecte al servicio, aquí se gestionarán los resultados
+        // Para lógica futura con servicio
     }
 
     @Override
     public void onLoad() {
-        // aquí se podrá cargar las preguntas desde el servicio
+        // Para cargar preguntas desde el backend en el futuro
     }
 }
