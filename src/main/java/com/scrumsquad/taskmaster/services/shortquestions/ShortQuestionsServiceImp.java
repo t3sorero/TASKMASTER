@@ -37,6 +37,9 @@ public class ShortQuestionsServiceImp extends ShortQuestionsService{
         }
     }
 
+    // Devuelve un mapa con el id de la pregunta y si esta bien o mal y
+    // recibe los ids de las preguntas con las respuestas del usuario y
+    // un set de todos los ids de las preguntas
     @Override
     public Map<Integer, Boolean> checkAnswers(Map<Integer, String> userAnswers, Set<Integer> preguntasIds) throws Exception {
         Transaction t = TransactionManager.getInstance().nuevaTransaccion();
