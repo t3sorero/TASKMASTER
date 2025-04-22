@@ -1,15 +1,19 @@
 package com.scrumsquad.taskmaster.views.student.games.practicaltest;
 
+import com.scrumsquad.taskmaster.controller.AppController;
 import com.scrumsquad.taskmaster.controller.Navigator;
+import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
+import com.scrumsquad.taskmaster.database.shortquestions.ShortQuestionDTO;
 import com.scrumsquad.taskmaster.lib.FontUtils;
+import com.scrumsquad.taskmaster.lib.ResourceLoader;
 import com.scrumsquad.taskmaster.lib.SwingUtils;
 import com.scrumsquad.taskmaster.lib.View;
 import com.scrumsquad.taskmaster.views.AppColors;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class PracticalTestView extends View {
@@ -19,22 +23,38 @@ public class PracticalTestView extends View {
     private List<JLabel> resultIcons = new ArrayList<>();
     private JLabel correctNumberLabel;
     private JLabel incorrectNumberLabel;
+    private JPanel cardPanel;
+    private CardLayout cardLayout;
+    private JPanel loadingPanel;
+    private JPanel contentPanel;
+    private int tema;
+    private List<ShortQuestionDTO> preguntas;
+    private Map<Integer, Integer> indexToId = new HashMap<>();
 
     @Override
     public JPanel build(BuildOptions options) {
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(AppColors.secondary);
+        tema = (int) options.arguments().getOrDefault("tema", 1);
+
+        cardLayout = new CardLayout();
+        cardPanel = new JPanel(cardLayout);
+        cardPanel.setBackground(AppColors.secondary);
+
+        loadingPanel = new JPanel(new GridBagLayout());
+        loadingPanel.setBackground(AppColors.secondary);
+        JLabel loadingIcon = new JLabel(ResourceLoader.loadImageIcon("/images/loading_80x80.gif"));
+        loadingPanel.add(loadingIcon);
+
+        contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(AppColors.secondary);
 
         // Título llamativo
-        String nombreTema = "TEMA " + options.arguments().getOrDefault("tema", "1");
+        String nombreTema = "TEMA " + tema;
         JLabel tituloLabel = new JLabel("TEST PRÁCTICO - " + nombreTema.toUpperCase());
         tituloLabel.setFont(FontUtils.lato30);
         tituloLabel.setForeground(AppColors.text);
         tituloLabel.setHorizontalAlignment(SwingConstants.CENTER);
         tituloLabel.setBorder(BorderFactory.createEmptyBorder(24, 0, 24, 0));
-
-        mainPanel.add(tituloLabel, BorderLayout.NORTH);
-
+        contentPanel.add(tituloLabel, BorderLayout.NORTH);
 
         // Panel con preguntas
         questionsPanel = new JPanel();
@@ -45,19 +65,15 @@ public class PracticalTestView extends View {
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setPreferredSize(new Dimension(960, 480));
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-
-        loadQuestions();
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
 
         // Panel inferior
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBackground(AppColors.secondaryLight);
         bottomPanel.setBorder(SwingUtils.emptyBorder(16, 32));
 
-        // Resultados (iconos correctos/incorrectos)
         JPanel resultPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 0));
         resultPanel.setOpaque(false);
-
         JLabel correctIcon = new JLabel(new ImageIcon(getClass().getResource("/images/good_icon.png")));
         correctNumberLabel = new JLabel("0");
         correctNumberLabel.setFont(FontUtils.lato20);
@@ -73,7 +89,6 @@ public class PracticalTestView extends View {
         resultPanel.add(incorrectIcon);
         resultPanel.add(incorrectNumberLabel);
 
-        // Botones
         JButton submitButton = new JButton("ENVIAR RESPUESTAS");
         submitButton.setFont(FontUtils.lato16);
         submitButton.setBackground(AppColors.primary);
@@ -97,30 +112,53 @@ public class PracticalTestView extends View {
 
         bottomPanel.add(resultPanel, BorderLayout.WEST);
         bottomPanel.add(buttonsPanel, BorderLayout.EAST);
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        contentPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        return mainPanel;
+        cardPanel.add("loading", loadingPanel);
+        cardPanel.add("loaded", contentPanel);
+
+        return cardPanel;
+    }
+
+    @Override
+    public void onLoad() {
+        cardLayout.show(cardPanel, "loading");
+        Context ctx = new Context(CommandName.shortQuestionsGetData);
+        ctx.setArgument("tema", tema);
+        AppController.getInstance().action(ctx);
+    }
+
+    @Override
+    public void update(Context ctx) {
+        if (ctx == null) return;
+
+        switch (ctx.getCommandName()) {
+            case CommandName.shortQuestionsGetDataOK -> {
+                preguntas = (List<ShortQuestionDTO>) ctx.getArguments().get("preguntas");
+                loadQuestions();
+                cardLayout.show(cardPanel, "loaded");
+            }
+            case CommandName.shortQuestionsGetDataKO -> {
+                JOptionPane.showMessageDialog(null, "Error al cargar las preguntas", "Error", JOptionPane.ERROR_MESSAGE);
+                cardLayout.show(cardPanel, "loaded");
+            }
+            case CommandName.shortQuestionsCheckAnswersOK -> {
+                Map<Integer, Boolean> feedback = (Map<Integer, Boolean>) ctx.getArguments().get("feedback");
+                showResults(feedback);
+            }
+        }
     }
 
     private void loadQuestions() {
         questionsPanel.removeAll();
         answerFields.clear();
         resultIcons.clear();
+        indexToId.clear();
 
-        String[] preguntas = {
-                "¿Qué es un equipo de trabajo?",
-                "¿Qué papel tiene un coordinador?",
-                "¿Qué significa sinergia en un equipo?",
-                "¿Cuál es la ventaja principal del trabajo colaborativo?",
-                "¿Qué es una metodología ágil?",
-                "¿Qué representa el rol de Scrum Master?",
-                "¿Qué herramienta se usa para seguimiento en Scrum?",
-                "¿Qué es una retrospectiva?",
-                "¿Qué significa MVP?",
-                "¿Qué se hace en una Daily Meeting?"
-        };
+        for (int i = 0; i < preguntas.size(); i++) {
+            ShortQuestionDTO pregunta = preguntas.get(i);
+            indexToId.put(i, pregunta.getId());
 
-        for (int i = 0; i < preguntas.length; i++) {
             JPanel preguntaPanel = new JPanel(new BorderLayout());
             preguntaPanel.setBackground(AppColors.secondaryLight);
             preguntaPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -129,7 +167,7 @@ public class PracticalTestView extends View {
             ));
             preguntaPanel.setMaximumSize(new Dimension(900, 100));
 
-            JLabel label = new JLabel((i + 1) + ". " + preguntas[i]);
+            JLabel label = new JLabel((i + 1) + ". " + pregunta.getPregunta());
             label.setFont(FontUtils.lato20);
             label.setForeground(AppColors.text);
 
@@ -158,48 +196,39 @@ public class PracticalTestView extends View {
         questionsPanel.repaint();
     }
 
-    public void checkAnswers() {
-        String[] respuestasCorrectas = {
-                "Conjunto de personas con objetivos comunes",
-                "Organiza y guía al equipo",
-                "Resultado superior al trabajo individual",
-                "Mejor rendimiento y comunicación",
-                "Marco de trabajo flexible y adaptativo",
-                "Facilitador del proceso Scrum",
-                "Tablero Kanban o herramientas como Jira",
-                "Reunión para mejorar el proceso",
-                "Producto mínimo viable",
-                "Compartir avances y plan diario"
-        };
+    private void checkAnswers() {
+        Map<Integer, String> userAnswers = new HashMap<>();
+        Set<Integer> ids = new HashSet<>();
+        for (int i = 0; i < answerFields.size(); i++) {
+            int id = indexToId.get(i);
+            ids.add(id);
+            userAnswers.put(id, answerFields.get(i).getText());
+        }
 
+        Context ctx = new Context(CommandName.shortQuestionsCheckAnswers);
+        ctx.setArgument("userAnswers", userAnswers);
+        ctx.setArgument("preguntasIds", ids);
+        AppController.getInstance().action(ctx);
+    }
+
+    private void showResults(Map<Integer, Boolean> feedback) {
         int correctas = 0;
         int incorrectas = 0;
 
-        for (int i = 0; i < respuestasCorrectas.length; i++) {
-            String respuestaUsuario = answerFields.get(i).getText().trim().toLowerCase();
-            String respuestaCorrecta = respuestasCorrectas[i].toLowerCase();
-
+        for (int i = 0; i < answerFields.size(); i++) {
+            int id = indexToId.get(i);
+            boolean esCorrecta = feedback.getOrDefault(id, false);
             JLabel icon = resultIcons.get(i);
-            if (respuestaUsuario.equals(respuestaCorrecta)) {
-                correctas++;
+            if (esCorrecta) {
                 icon.setIcon(new ImageIcon(getClass().getResource("/images/good_icon.png")));
+                correctas++;
             } else {
-                incorrectas++;
                 icon.setIcon(new ImageIcon(getClass().getResource("/images/bad_icon.png")));
+                incorrectas++;
             }
         }
 
         correctNumberLabel.setText(String.valueOf(correctas));
         incorrectNumberLabel.setText(String.valueOf(incorrectas));
-    }
-
-    @Override
-    public void update(Context ctx) {
-        // Para lógica futura con servicio
-    }
-
-    @Override
-    public void onLoad() {
-        // Para cargar preguntas desde el backend en el futuro
     }
 }

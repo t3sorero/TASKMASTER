@@ -14,9 +14,10 @@ public class ShortQuestionsDAOImp implements ShortQuestionsDAO{
     @Override
     public List<ShortQuestionDTO> getAllQuestions(int tema) throws Exception {
         List<ShortQuestionDTO> preguntas = new ArrayList<>();
-        String query = "SELECT * FROM preguntas WHERE tema = ?";
+        String query = "SELECT * FROM preguntas WHERE tema = ?::varchar";
         Transaction transaction = TransactionManager.getInstance().getTransaccion();
         Connection con = transaction.getResource();
+
         PreparedStatement ps = con.prepareStatement(query);
         ps.setInt(1, tema);
         ResultSet rs = ps.executeQuery();
