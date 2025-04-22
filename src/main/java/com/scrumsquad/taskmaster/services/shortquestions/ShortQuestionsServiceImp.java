@@ -5,6 +5,7 @@ import com.scrumsquad.taskmaster.database.shortquestions.ShortQuestionDTO;
 import com.scrumsquad.taskmaster.lib.transactions.Transaction;
 import com.scrumsquad.taskmaster.lib.transactions.TransactionManager;
 
+import java.text.Collator;
 import java.util.*;
 
 public class ShortQuestionsServiceImp extends ShortQuestionsService{
@@ -51,7 +52,7 @@ public class ShortQuestionsServiceImp extends ShortQuestionsService{
                 for(var index : preguntasIds){
                     if(userAnswers.containsKey(index)){
                         String respuesta = daoPreguntas.getRespuestaById(index);
-                        if(respuesta.equalsIgnoreCase(userAnswers.get(index))){
+                        if(isSameString(respuesta, userAnswers.get(index))){
                             results.put(index, true);
                         } else{
                             results.put(index, false);
@@ -67,5 +68,11 @@ public class ShortQuestionsServiceImp extends ShortQuestionsService{
             t.rollback();
             throw e;
         }
+    }
+
+    public boolean isSameString(String a, String b) {
+        Collator insenstiveStringComparator = Collator.getInstance();
+        insenstiveStringComparator.setStrength(Collator.PRIMARY);
+        return insenstiveStringComparator.compare(a, b) == 0;
     }
 }
