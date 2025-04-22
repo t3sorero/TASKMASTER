@@ -1,4 +1,4 @@
-package com.scrumsquad.taskmaster.views.student.games.practicaltest;
+package com.scrumsquad.taskmaster.views.student.games.shortquestions;
 
 import com.scrumsquad.taskmaster.controller.AppController;
 import com.scrumsquad.taskmaster.controller.Navigator;
@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class PracticalTestView extends View {
+public class ShortQuestionsView extends View {
 
     private JPanel questionsPanel;
     private List<JTextField> answerFields = new ArrayList<>();
@@ -196,7 +196,7 @@ public class PracticalTestView extends View {
         questionsPanel.repaint();
     }
 
-    private void checkAnswers() {
+    public void checkAnswers() {
         Map<Integer, String> userAnswers = new HashMap<>();
         Set<Integer> ids = new HashSet<>();
         for (int i = 0; i < answerFields.size(); i++) {
