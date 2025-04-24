@@ -6,7 +6,6 @@ import com.scrumsquad.taskmaster.lib.transactions.TransactionManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +33,8 @@ public class QuizDAOImp implements QuizDAO {
             preguntas.add(new PreguntaQuizDTO(rs.getInt("id"), rs.getString("pregunta"),
                     nivel,opciones.get(0), opciones));
         }
+        ps.close();
+        rs.close();
         return preguntas;
     }
 }
