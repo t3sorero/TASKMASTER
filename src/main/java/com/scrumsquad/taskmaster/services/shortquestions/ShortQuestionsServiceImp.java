@@ -71,6 +71,10 @@ public class ShortQuestionsServiceImp extends ShortQuestionsService{
     }
 
     public boolean isSameString(String a, String b) {
+        // Si alguna de las cadenas es null, no pueden ser iguales.
+        if (a == null || b == null) {
+            return false;
+        }
         Collator insenstiveStringComparator = Collator.getInstance();
         insenstiveStringComparator.setStrength(Collator.PRIMARY);
         return insenstiveStringComparator.compare(a, b) == 0;
