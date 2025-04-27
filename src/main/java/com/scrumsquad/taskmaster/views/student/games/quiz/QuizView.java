@@ -5,11 +5,13 @@ import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.quiz.PreguntaQuizDTO;
 import com.scrumsquad.taskmaster.lib.FontUtils;
+import com.scrumsquad.taskmaster.lib.ResourceLoader;
 import com.scrumsquad.taskmaster.lib.SwingUtils;
 import com.scrumsquad.taskmaster.lib.View;
 import com.scrumsquad.taskmaster.lib.swing.GradientRoundedPanel;
 import com.scrumsquad.taskmaster.lib.swing.ImagePanel;
 import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
+import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.AppColors;
 
 import javax.swing.*;
@@ -61,6 +63,7 @@ public class QuizView extends View {
         cardPanel.setOpaque(false);
 
         cardPanel.add("progreso", createProgresoPanel());
+        cardPanel.add("error", createErrorPanel());
         cardPanel.add("ganaste", createAuxPanel("Ganaste")); //TODO quitar en la version final
         cardPanel.add("perdiste", createAuxPanel("Perdiste")); //TODO quitar en la version final
 
@@ -70,7 +73,7 @@ public class QuizView extends View {
     }
 
     //TODO quitar en version final
-    public JPanel createAuxPanel(String texto) {
+    private JPanel createAuxPanel(String texto) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Layout vertical
 
@@ -87,6 +90,23 @@ public class QuizView extends View {
         panel.add(subtitulo);
 
         return panel;
+    }
+
+    private JPanel createErrorPanel(){
+        GridBagConstraints errorConstraints = SwingUtils.verticalConstraints();
+        errorConstraints.insets = new Insets(8, 0, 8, 0);
+        JPanel errorPanel = new JPanel(new GridBagLayout());
+        errorPanel.setOpaque(false);
+        JLabel errorIconPanel = new JLabel(ResourceLoader.loadImageIcon("/images/error_icon.png"));
+        JLabel errorMessagePanel = new JLabel("Error al cargar de la base de datos");
+        JPanel aux = new JPanel();
+        aux.setLayout(new FlowLayout());
+        errorMessagePanel.setFont(FontUtils.lato30);
+        errorMessagePanel.setForeground(AppColors.error);
+        aux.add(errorMessagePanel);
+        errorPanel.add(errorIconPanel, errorConstraints);
+        errorPanel.add(aux, errorConstraints);
+        return errorPanel;
     }
 
     private JPanel createProgresoPanel() {
@@ -395,8 +415,14 @@ public class QuizView extends View {
     @Override
     public void update(Context ctx) {
         System.out.println("ha llegado el contexto");
-        preguntas = (HashMap<Integer, PreguntaQuizDTO>)ctx.getArguments().get("preguntas");
-        cardPanel.add("pregunta", createQuestionsPanel(currentQuestion*2));
-        showProgresoPanel();
+        if (ctx ==  null) return;
+        if (ctx.getCommandName().equals(CommandName.quizScrumGetDataOk)) {
+            preguntas = (HashMap<Integer, PreguntaQuizDTO>) ctx.getArguments().get("preguntas");
+            cardPanel.add("pregunta", createQuestionsPanel(currentQuestion*2));
+            showProgresoPanel();
+        }
+        else {
+            cardLayout.show(cardPanel, "error");
+        }
     }
 }
