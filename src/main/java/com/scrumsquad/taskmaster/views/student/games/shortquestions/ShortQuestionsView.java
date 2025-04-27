@@ -165,11 +165,14 @@ public class ShortQuestionsView extends View {
                     BorderFactory.createEmptyBorder(12, 24, 12, 24),
                     BorderFactory.createLineBorder(AppColors.secondary, 2)
             ));
-            preguntaPanel.setMaximumSize(new Dimension(900, 100));
+            preguntaPanel.setMaximumSize(new Dimension(900, 120)); // Ajusta un poco más de altura
 
-            JLabel label = new JLabel((i + 1) + ". " + pregunta.getPregunta());
+            // ---- Aquí el cambio importante ----
+            JLabel label = new JLabel("<html>" + (i + 1) + ". " + pregunta.getPregunta() + "</html>");
             label.setFont(FontUtils.lato20);
             label.setForeground(AppColors.text);
+            label.setVerticalAlignment(SwingConstants.TOP); // Para alinear bien arriba
+            label.setBorder(BorderFactory.createEmptyBorder(0, 0, 8, 0)); // Margen debajo del texto
 
             JTextField textField = new JTextField();
             textField.setFont(FontUtils.lato16);
@@ -195,6 +198,7 @@ public class ShortQuestionsView extends View {
         questionsPanel.revalidate();
         questionsPanel.repaint();
     }
+
 
     public void checkAnswers() {
         Map<Integer, String> userAnswers = new HashMap<>();
