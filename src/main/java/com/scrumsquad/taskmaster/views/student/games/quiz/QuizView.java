@@ -49,17 +49,6 @@ public class QuizView extends View {
     @Override
     public JPanel build(BuildOptions options) {
 
-        /*
-        30 min + desde 20:10 hasta 22:30
-        30 min + 2:20
-        TODO
-        preguntas:
-        he movido el showProgresoPanel al update porque se llamaba antes que al update lo que
-        provocaba que se intentara crear el panel sin haber llegado la informacion primero
-
-        cómo hago para poner la pantalla de error si falla la base de datos
-         */
-
         //llamada al comando
         Context ctx = new Context(CommandName.quizScrumGetData);
         AppController.getInstance().action(ctx);
@@ -72,10 +61,32 @@ public class QuizView extends View {
         cardPanel.setOpaque(false);
 
         cardPanel.add("progreso", createProgresoPanel());
+        cardPanel.add("ganaste", createAuxPanel("Ganaste")); //TODO quitar en la version final
+        cardPanel.add("perdiste", createAuxPanel("Perdiste")); //TODO quitar en la version final
 
         mainPanel.add(cardPanel);
 
         return mainPanel;
+    }
+
+    //TODO quitar en version final
+    public JPanel createAuxPanel(String texto) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Layout vertical
+
+        JLabel titulo = new JLabel(texto);
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titulo.setFont(new Font("Arial", Font.BOLD, 24));
+
+        JLabel subtitulo = new JLabel("vista provisional");
+        subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        panel.add(titulo);
+        panel.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio entre etiquetas
+        panel.add(subtitulo);
+
+        return panel;
     }
 
     private JPanel createProgresoPanel() {
@@ -120,15 +131,6 @@ public class QuizView extends View {
         }
         cardLayout.show(cardPanel, "progreso");
 
-        /*
-        SwingWorker<JPanel, Void> worker = new SwingWorker<>() {
-            @Override
-            protected JPanel doInBackground() {
-                return createQuestionsPanel(currentQuestion*2);
-            }
-        };
-        worker.execute();*/
-
         showPreguntaPanel(0); //hace el efecto de parpadeo
     }
 
@@ -152,6 +154,7 @@ public class QuizView extends View {
                 cardLayout.show(cardPanel, "pregunta");
             }
         });
+        timer.setRepeats(false); //Sin esta linea no para de salir el panel de las preguntas
         timer.start();
     }
 
@@ -350,22 +353,30 @@ public class QuizView extends View {
     private void responseMaded(int i) {
         respuestaButtons.get(correctQuestion).setColor(correctColor, correctColor);
         respuestaButtons.get(correctQuestion).repaint();
+
+        Timer timer = null;
         if (i != correctQuestion) { //respuesta incorrecta
             respuestaButtons.get(i).setColor(incorrectColor, incorrectColor);
             respuestaButtons.get(i).repaint();
+            timer = new Timer(2000, (e) -> {
+                cardLayout.show(cardPanel, "perdiste");
+            });
         }
         else if (currentQuestion != 4){ //respuesta correcta
-            Timer timer = new Timer(2000, (e) -> {
+            timer = new Timer(2000, (e) -> {
                 currentQuestion++;
                 updateQuestionPanel(currentQuestion*2);
                 showProgresoPanel();
             });
             timer.setRepeats(false);
-            timer.start();
-        }
-        else { //juego terminado
 
         }
+        else { //juego terminado
+            timer = new Timer(10000, (e) -> {
+                cardLayout.show(cardPanel, "ganaste");
+            });
+        }
+        timer.start();
     }
 
     @Override
