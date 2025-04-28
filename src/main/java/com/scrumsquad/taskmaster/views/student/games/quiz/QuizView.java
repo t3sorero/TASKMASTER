@@ -38,6 +38,7 @@ public class QuizView extends View {
 
     private java.util.List<JPanel> progresoQuestions = new ArrayList<>(totalQuestions);
     private JPanel pregunta;
+    private JPanel pista;
     private java.util.List<GradientRoundedPanel> respuestaButtons = new ArrayList<>(4);
     private JPanel comodinesPanel = null;
 
@@ -164,7 +165,7 @@ public class QuizView extends View {
             timer.stop();
         }
         timer = null;
-        timer = new Timer(400, (e) -> {
+        timer = new Timer(300, (e) -> {
             if (cont < 7) {
                 progresoQuestions
                         .get(currentQuestion)
@@ -182,6 +183,14 @@ public class QuizView extends View {
         JLabel textoPregunta = (JLabel)pregunta.getComponents()[0];
         textoPregunta.setText(preguntas.get(current+1).getPregunta());
         Collections.shuffle(preguntas.get(current+1).getOpciones());
+
+        Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
+        this.pista.setVisible(false);
+        JLabel textoPista = (JLabel)pista.getComponents()[0];
+        textoPista.setText(preguntas.get(current).getPista());
+        textoPista = (JLabel)pista.getComponents()[0];
+        this.pista.setMaximumSize(new Dimension(textoPista.getPreferredSize().width+50, pantalla.height / 20));
+        this.pista.setPreferredSize(new Dimension(textoPista.getPreferredSize().width+50, pantalla.height / 20));
 
         for (int i = 0; i < 4; i++) {
             GradientRoundedPanel panel = respuestaButtons.get(i);
@@ -211,7 +220,7 @@ public class QuizView extends View {
         enabled = true;
 
         //comodines
-        mainPanel.add(Objects.requireNonNullElseGet(comodinesPanel, this::createComodines));
+        mainPanel.add(createComodines(current));
 
         //separador
         mainPanel.add(Box.createVerticalStrut(10));
@@ -254,7 +263,7 @@ public class QuizView extends View {
         return mainPanel;
     }
 
-    private JPanel createComodines(){
+    private JPanel createComodines(int current){
         Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
         JPanel comodinesAux = new JPanel();
         comodinesAux.setLayout(new BoxLayout(comodinesAux, BoxLayout.X_AXIS));
@@ -276,12 +285,23 @@ public class QuizView extends View {
         comodines.add(preguntaExtra);
         comodines.add(Box.createHorizontalStrut(10));
         comodines.add(pista);
-
         comodinesAux.add(comodines);
-        JPanel nada = new JPanel();
-        nada.setMaximumSize(new Dimension(pantalla.width, 1));
-        nada.setOpaque(false);
-        comodinesAux.add(nada);
+
+        comodinesAux.add(Box.createHorizontalGlue());
+
+        GradientRoundedPanel pistaPanel = new GradientRoundedPanel(preguntaColor1, preguntaColor2, Color.white, 20);
+        pistaPanel.setLayout(new GridBagLayout());
+        pistaPanel.setOpaque(false);
+        pistaPanel.setVisible(false);
+        this.pista = pistaPanel;
+        JLabel textoPista = new JLabel(preguntas.get(current+1).getPista());
+        textoPista.setFont(FontUtils.lato20);
+        textoPista.setForeground(Color.white);
+        pistaPanel.add(textoPista);
+        pistaPanel.setMaximumSize(new Dimension(textoPista.getPreferredSize().width+50, pantalla.height / 20));
+        pistaPanel.setPreferredSize(new Dimension(textoPista.getPreferredSize().width+50, pantalla.height / 20));
+        comodinesAux.add(pistaPanel);
+
         comodines.setMaximumSize(new Dimension(pantalla.width / 4, pantalla.height / 20));
         comodines.setPreferredSize(new Dimension(pantalla.width / 4, pantalla.height / 20));
         this.comodinesPanel = comodinesAux;
@@ -289,7 +309,6 @@ public class QuizView extends View {
     }
 
     private GradientRoundedPanel comodinesAux(String texto) {
-        //JPanel panel = new ImagePanel("/images/login-background.jpg");
         GradientRoundedPanel panel = new GradientRoundedPanel
                 (preguntaColor1, preguntaColor2, Color.white, 20);
         panel.setOpaque(false);
@@ -343,7 +362,17 @@ public class QuizView extends View {
     }
 
     private void createPista(GradientRoundedPanel panel) {
-        panel.setColor(progresoRemainingColor, progresoRemainingColor);
+        panel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent event) {
+                if (enabled) {
+                    panel.removeMouseListener(this);
+                    panel.setColor(progresoRemainingColor, progresoRemainingColor);
+                    panel.repaint();
+                    pista.setVisible(true);
+                }
+            }
+        });
     }
 
     private JPanel createResponse(int i, int current) {
