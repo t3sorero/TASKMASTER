@@ -4,12 +4,15 @@ import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.lib.View;
 import javafx.embed.swing.JFXPanel;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.animation.TranslateTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.RotateTransition;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.KeyValue;
@@ -18,11 +21,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Glow;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.transform.Rotate;
@@ -36,6 +43,7 @@ import java.util.Random;
 public class WinnerView extends View {
     private MediaPlayer player;
     private Timeline confettiTimeline;
+    private Timeline pulseTimeline;
 
     @Override
     public JPanel build(BuildOptions options) {
@@ -105,13 +113,6 @@ public class WinnerView extends View {
         // Añadimos las cortinas al root
         root.getChildren().addAll(leftCurtainPane, rightCurtainPane);
 
-        // Efecto de borde dorado para las cortinas (típico de teatro)
-        Rectangle leftBorder = new Rectangle(w/2 - 10, 0, 10, h);
-        leftBorder.setFill(Color.rgb(255, 215, 0)); // Dorado
-        Rectangle rightBorder = new Rectangle(w/2, 0, 10, h);
-        rightBorder.setFill(Color.rgb(255, 215, 0)); // Dorado
-        root.getChildren().addAll(leftBorder, rightBorder);
-
         // Animación para abrir las cortinas
         TranslateTransition leftAnim = new TranslateTransition(Duration.seconds(2.5), leftCurtainPane);
         leftAnim.setByX(-w/2);
@@ -141,13 +142,28 @@ public class WinnerView extends View {
         stage.setEffect(new DropShadow(20, Color.rgb(0, 0, 0, 0.5)));
         stage.setOpacity(0); // Empezamos con opacidad 0 para animarlo
 
-        // Añadimos el panel al root
-        root.getChildren().add(stage);
+        // Bordes dorados mejorados para la parte superior e inferior
+        Rectangle topBorder = new Rectangle(50, 50, w - 100, 15);
+        topBorder.setFill(Color.rgb(255, 215, 0)); // Dorado
+        topBorder.setOpacity(0);
 
-        // Animamos la aparición del panel
+        Rectangle bottomBorder = new Rectangle(50, h - 65, w - 100, 15);
+        bottomBorder.setFill(Color.rgb(255, 215, 0)); // Dorado
+        bottomBorder.setOpacity(0);
+
+        // Añadimos el panel al root
+        root.getChildren().addAll(stage, topBorder, bottomBorder);
+
+        // Animamos la aparición del panel y los bordes
         Timeline fadeInPanel = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(stage.opacityProperty(), 0)),
-                new KeyFrame(Duration.seconds(0.8), new KeyValue(stage.opacityProperty(), 1))
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(stage.opacityProperty(), 0),
+                        new KeyValue(topBorder.opacityProperty(), 0),
+                        new KeyValue(bottomBorder.opacityProperty(), 0)),
+                new KeyFrame(Duration.seconds(0.8),
+                        new KeyValue(stage.opacityProperty(), 1),
+                        new KeyValue(topBorder.opacityProperty(), 1),
+                        new KeyValue(bottomBorder.opacityProperty(), 1))
         );
 
         fadeInPanel.setOnFinished(e -> {
@@ -159,37 +175,39 @@ public class WinnerView extends View {
     }
 
     private void showCongratulationsMessage(Pane root, double w, double h) {
-        // Intentamos cargar un trofeo SVG o PNG
-        try {
-            // Creamos un trofeo dibujado con JavaFX (ya que puede no existir el archivo)
-            Pane trophyPane = createTrophyGraphic();
-            trophyPane.setLayoutX((w - 100) / 2);  // Centrado, asumiendo ancho de 100
-            trophyPane.setLayoutY(h/2 - 200);      // Colocado en la parte superior
+        // Creamos un trofeo personalizado mejorado
+        Pane trophyPane = createImprovedTrophy();
+        trophyPane.setScaleX(1.3);
+        trophyPane.setScaleY(1.3);
+        trophyPane.setLayoutX((w - 120) / 2);  // Centrado, ajustando por escala
+        trophyPane.setLayoutY(h/2 - 240);      // Colocado en la parte superior
+        trophyPane.setOpacity(0); // Inicialmente invisible para animarlo
 
-            // Añadimos un efecto de brillo
-            Bloom bloom = new Bloom();
-            bloom.setThreshold(0.3);
-            trophyPane.setEffect(bloom);
+        // Añadimos un efecto de brillo
+        Glow glow = new Glow();
+        glow.setLevel(0.6);
 
-            // Rotación suave para el trofeo
-            RotateTransition rt = new RotateTransition(Duration.seconds(4), trophyPane);
-            rt.setByAngle(10);
-            rt.setAxis(Rotate.Z_AXIS);
-            rt.setAutoReverse(true);
-            rt.setCycleCount(Timeline.INDEFINITE);
-            rt.play();
+        // Aplicamos un efecto de sombra proyectada para más profundidad
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setColor(Color.GOLD);
+        dropShadow.setRadius(30);
+        dropShadow.setSpread(0.5);
 
-            root.getChildren().add(trophyPane);
-        } catch (Exception e) {
-            System.err.println("Error creando el trofeo: " + e.getMessage());
-        }
+        // Combinamos los efectos
+        glow.setInput(dropShadow);
+        trophyPane.setEffect(glow);
+
+        root.getChildren().add(trophyPane);
 
         // Mensaje principal con estilo didáctico y motivador
         Text msg = new Text("¡Enhorabuena!");
         msg.setFont(Font.font("Arial", FontWeight.BOLD, 48));
         msg.setFill(Color.rgb(33, 150, 243)); // Azul brillante
-        msg.setX((w - msg.getLayoutBounds().getWidth()) / 2);
-        msg.setY(h/2);
+
+        // Calculamos el ancho del texto correctamente antes de posicionarlo
+        double msgWidth = computeTextWidth(msg.getText(), msg.getFont());
+        msg.setX((w - msgWidth) / 2);
+        msg.setY(h/2 + 30);
 
         // Efecto de sombra para el texto
         DropShadow shadow = new DropShadow();
@@ -202,14 +220,55 @@ public class WinnerView extends View {
         Text subtitle = new Text("Eres ya un SCRUM MASTER");
         subtitle.setFont(Font.font("Arial", FontWeight.BOLD, 30));
         subtitle.setFill(Color.rgb(76, 175, 80)); // Verde didáctico
-        subtitle.setX((w - subtitle.getLayoutBounds().getWidth()) / 2);
-        subtitle.setY(h/2 + 50);
+
+        // Calculamos el ancho del texto correctamente antes de posicionarlo
+        double subtitleWidth = computeTextWidth(subtitle.getText(), subtitle.getFont());
+        subtitle.setX((w - subtitleWidth) / 2);
+        subtitle.setY(h/2 + 80);
         subtitle.setEffect(shadow);
 
         // Animación para el mensaje
         msg.setOpacity(0);
         subtitle.setOpacity(0);
 
+        // 1. Entrada del trofeo con efecto de aparición y rebote suave
+        FadeTransition fadeInTrophy = new FadeTransition(Duration.seconds(1), trophyPane);
+        fadeInTrophy.setFromValue(0);
+        fadeInTrophy.setToValue(1);
+
+        // Añadimos un pequeño rebote al trofeo
+        TranslateTransition trophyBounce = new TranslateTransition(Duration.seconds(1), trophyPane);
+        trophyBounce.setFromY(-50);
+        trophyBounce.setToY(0);
+
+        // 2. Eliminamos la rotación 3D completa que causaba problemas visuales
+        // Reemplazamos con una rotación suave y limitada para mantener un efecto sutil
+        RotateTransition rotateY = new RotateTransition(Duration.seconds(4), trophyPane);
+        rotateY.setAxis(Rotate.Y_AXIS);
+        // Rotación limitada de solo 15 grados en cada dirección
+        rotateY.setFromAngle(-15);
+        rotateY.setToAngle(15);
+        rotateY.setCycleCount(Timeline.INDEFINITE);
+        rotateY.setAutoReverse(true);
+
+        // 3. Efecto de pulso para hacer más notoria la animación
+        pulseTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(glow.levelProperty(), 0.6)),
+                new KeyFrame(Duration.seconds(1), new KeyValue(glow.levelProperty(), 0.3)),
+                new KeyFrame(Duration.seconds(2), new KeyValue(glow.levelProperty(), 0.6))
+        );
+        pulseTimeline.setCycleCount(Timeline.INDEFINITE);
+
+        // Reproducimos todas las animaciones del trofeo
+        ParallelTransition trophyEntrance = new ParallelTransition(fadeInTrophy, trophyBounce);
+        trophyEntrance.play();
+
+        trophyEntrance.setOnFinished(e -> {
+            rotateY.play();
+            pulseTimeline.play();
+        });
+
+        // Animación para el mensaje de texto
         Timeline fadeInText = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(msg.opacityProperty(), 0),
@@ -225,38 +284,151 @@ public class WinnerView extends View {
         fadeInText.play();
     }
 
-    // Método para crear un trofeo gráficamente con JavaFX
-    private Pane createTrophyGraphic() {
+    // Método auxiliar para calcular el ancho real del texto
+    private double computeTextWidth(String text, Font font) {
+        Text helper = new Text(text);
+        helper.setFont(font);
+        return helper.getLayoutBounds().getWidth();
+    }
+
+    // Método para crear un trofeo mejorado con menos problemas de renderizado
+    private Pane createImprovedTrophy() {
         Pane trophyPane = new Pane();
-        trophyPane.setPrefSize(100, 150);
+        trophyPane.setPrefSize(100, 200);
 
-        // Copa del trofeo
-        Rectangle cup = new Rectangle(25, 0, 50, 60);
-        cup.setArcWidth(25);
-        cup.setArcHeight(25);
-        cup.setFill(Color.rgb(255, 215, 0)); // Dorado
+        // Colores del trofeo
+        Color goldColor = Color.rgb(255, 215, 0);
+        Color goldShadow = Color.rgb(218, 165, 32);
+        Color goldHighlight = Color.rgb(255, 235, 100);
+        Color redColor = Color.rgb(220, 20, 20);
+        Color blackBase = Color.rgb(20, 20, 20);
 
-        // Base del trofeo
-        Rectangle base = new Rectangle(15, 100, 70, 20);
-        base.setFill(Color.rgb(205, 127, 50)); // Bronce
+        // Base negra del trofeo (más detallada)
+        Rectangle baseBottom = new Rectangle(5, 170, 90, 15);
+        baseBottom.setFill(blackBase);
+        baseBottom.setArcWidth(5);
+        baseBottom.setArcHeight(5);
 
-        // Pie del trofeo
-        Rectangle stem = new Rectangle(45, 60, 10, 40);
-        stem.setFill(Color.rgb(255, 215, 0)); // Dorado
+        Rectangle baseMiddle = new Rectangle(15, 155, 70, 15);
+        baseMiddle.setFill(blackBase);
+        baseMiddle.setArcWidth(5);
+        baseMiddle.setArcHeight(5);
 
-        // Base inferior
-        Rectangle bottomBase = new Rectangle(25, 120, 50, 10);
-        bottomBase.setFill(Color.rgb(205, 127, 50)); // Bronce
+        Rectangle baseTop = new Rectangle(25, 140, 50, 15);
+        baseTop.setFill(blackBase);
+        baseTop.setArcWidth(5);
+        baseTop.setArcHeight(5);
 
-        // Añadimos todos los elementos al panel
-        trophyPane.getChildren().addAll(cup, stem, base, bottomBase);
+        // Tallo dorado del trofeo (con gradiente para mejor efecto 3D)
+        Rectangle stem = new Rectangle(45, 90, 10, 50);
+        stem.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldShadow),
+                new Stop(0.5, goldColor),
+                new Stop(1, goldShadow)));
 
-        // Efecto de brillo para el trofeo
-        DropShadow glow = new DropShadow();
-        glow.setColor(Color.rgb(255, 255, 0, 0.8));
-        glow.setWidth(20);
-        glow.setHeight(20);
-        trophyPane.setEffect(glow);
+        // Copa del trofeo con mejor detalle
+        // Parte inferior de la copa
+        Ellipse cupBottom = new Ellipse(50, 90, 25, 8);
+        cupBottom.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldShadow),
+                new Stop(0.5, goldColor),
+                new Stop(1, goldHighlight)));
+
+        // Laterales y centro de la copa (más definidos)
+        Rectangle cupLeft = new Rectangle(25, 35, 5, 55);
+        cupLeft.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldShadow),
+                new Stop(1, goldColor)));
+
+        Rectangle cupRight = new Rectangle(70, 35, 5, 55);
+        cupRight.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldColor),
+                new Stop(1, goldShadow)));
+
+        Rectangle cupMiddle = new Rectangle(30, 35, 40, 55);
+        cupMiddle.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldShadow),
+                new Stop(0.5, goldColor),
+                new Stop(1, goldShadow)));
+
+        // Parte superior de la copa (redondeada)
+        Ellipse cupTop = new Ellipse(50, 35, 25, 8);
+        cupTop.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldHighlight),
+                new Stop(0.5, goldColor),
+                new Stop(1, goldShadow)));
+
+        // Asas del trofeo (más definidas y con efecto 3D)
+        // Asa izquierda
+        Ellipse handleLeftOuter = new Ellipse(15, 60, 10, 25);
+        handleLeftOuter.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldShadow),
+                new Stop(1, goldColor)));
+
+        Ellipse handleLeftInner = new Ellipse(15, 60, 5, 20);
+        handleLeftInner.setFill(Color.rgb(245, 245, 245)); // Fondo que simula hueco
+
+        // Asa derecha
+        Ellipse handleRightOuter = new Ellipse(85, 60, 10, 25);
+        handleRightOuter.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
+                new Stop(0, goldColor),
+                new Stop(1, goldShadow)));
+
+        Ellipse handleRightInner = new Ellipse(85, 60, 5, 20);
+        handleRightInner.setFill(Color.rgb(245, 245, 245)); // Fondo que simula hueco
+
+        // Creamos un StackPane para agrupar el círculo rojo y el número
+        // El círculo tendrá un radio de 18, por lo que el StackPane tendrá un diámetro de 36
+        // Queremos que el centro se ubique en (50,55) => posición (50-18, 55-18)
+        StackPane redCirclePane = new StackPane();
+        redCirclePane.setLayoutX(50 - 18);
+        redCirclePane.setLayoutY(55 - 18);
+        redCirclePane.setPrefSize(36, 36);
+
+        // Círculo rojo central ajustado para el StackPane (usando coordenadas relativas)
+        Circle redCircleBg = new Circle(18, 18, 18);
+        redCircleBg.setFill(Color.rgb(240, 30, 30)); // Base roja más oscura
+
+        Circle redCircle = new Circle(18, 18, 16);
+        redCircle.setFill(new RadialGradient(0, 0, 0.3, 0.3, 0.7, true, CycleMethod.NO_CYCLE,
+                new Stop(0, Color.rgb(255, 100, 100)),
+                new Stop(0.8, Color.rgb(220, 20, 20)),
+                new Stop(1, Color.rgb(180, 0, 0))));
+
+        Circle redCircleBorder = new Circle(18, 18, 18);
+        redCircleBorder.setFill(Color.TRANSPARENT);
+        redCircleBorder.setStroke(goldColor);
+        redCircleBorder.setStrokeWidth(2);
+
+        // Texto que representa el número "1"
+        Text numberOne = new Text("1");
+        numberOne.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        numberOne.setFill(Color.WHITE);
+        StackPane.setAlignment(numberOne, Pos.CENTER);  // Centramos el texto
+
+        // Se añaden los nodos al contenedor. Gracias al StackPane, el número quedará centrado.
+        redCirclePane.getChildren().addAll(redCircleBg, redCircle, redCircleBorder, numberOne);
+
+        // Aplicamos efectos de iluminación más sutiles
+        Light.Distant light = new Light.Distant();
+        light.setAzimuth(-135.0);
+        light.setElevation(30.0);
+
+        Lighting lighting = new Lighting();
+        lighting.setLight(light);
+        lighting.setSurfaceScale(3.0); // Efecto sutil
+
+        cupMiddle.setEffect(lighting);
+
+        // Se añaden todos los componentes al Pane principal en orden para la correcta superposición
+        trophyPane.getChildren().addAll(
+                baseBottom, baseMiddle, baseTop,
+                stem, cupBottom,
+                handleLeftOuter, handleLeftInner,
+                handleRightOuter, handleRightInner,
+                cupLeft, cupRight, cupMiddle, cupTop,
+                redCirclePane  // Usamos el StackPane que ya contiene el círculo y el número
+        );
 
         return trophyPane;
     }
@@ -352,7 +524,7 @@ public class WinnerView extends View {
 
     @Override
     public void onDispose() {
-        // Detener la reproducción de música y la animación al salir de la vista
+        // Detener la reproducción de música y las animaciones al salir de la vista
         Platform.runLater(() -> {
             if (player != null) {
                 player.stop();
@@ -360,6 +532,9 @@ public class WinnerView extends View {
             }
             if (confettiTimeline != null) {
                 confettiTimeline.stop();
+            }
+            if (pulseTimeline != null) {
+                pulseTimeline.stop();
             }
         });
     }
