@@ -32,9 +32,9 @@ public class QuizGetDataCommandTest {
         // Datos simulados para el fake
         Map<Integer, PreguntaQuizDTO> preguntas = new HashMap<>();
         preguntas.put(1, new PreguntaQuizDTO(1, "¿Qué es Scrum?", 1, "Marco de trabajo ágil",
-                List.of("Marco de trabajo ágil", "Lenguaje de programación", "Base de datos", "Sistema operativo")));
+                List.of("Marco de trabajo ágil", "Lenguaje de programación", "Base de datos", "Sistema operativo"), "pista"));
         preguntas.put(2, new PreguntaQuizDTO(2, "¿Quién es el Product Owner?", 1, "Responsable del valor del producto",
-                List.of("Responsable del valor del producto", "Scrum Master", "Cliente", "CEO")));
+                List.of("Responsable del valor del producto", "Scrum Master", "Cliente", "CEO"), "pista"));
 
         // Inyectar el fake
         mockQuiz.when(QuizService::getInstance).thenReturn(new QuizServiceFake(preguntas));

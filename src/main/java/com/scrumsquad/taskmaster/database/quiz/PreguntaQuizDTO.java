@@ -9,13 +9,22 @@ public class PreguntaQuizDTO {
     private int nivel; //o string, depende de BD
     private String correcta;
     private List<String> opciones;
-
-    public PreguntaQuizDTO(Integer id,String pregunta, int nivel, String correcta, List<String> opciones) {
+    private String pista;
+    public PreguntaQuizDTO(Integer id,String pregunta, int nivel, String correcta, List<String> opciones, String pista) {
         this.id = id;
         this.pregunta = pregunta;
         this.nivel = nivel;
         this.correcta = correcta;
         this.opciones = opciones;
+        this.pista = pista;
+    }
+
+    public String getPista() {
+        return pista;
+    }
+
+    public void setPista(String pista) {
+        this.pista = pista;
     }
 
     public int getId() {

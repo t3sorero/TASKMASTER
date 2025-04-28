@@ -92,7 +92,7 @@ public class QuizServiceTest {
             List<PreguntaQuizDTO> lista = new ArrayList<>();
             for (int i = 1; i <= 4; i++) {
                 List<String> opciones = List.of("Correcta " + i, "Incorrecta A", "Incorrecta B", "Incorrecta C");
-                lista.add(new PreguntaQuizDTO(nivel * 10 + i, "Pregunta " + i + " nivel " + nivel, nivel, "Correcta " + i, opciones));
+                lista.add(new PreguntaQuizDTO(nivel * 10 + i, "Pregunta " + i + " nivel " + nivel, nivel, "Correcta " + i, opciones, "pista"));
             }
             return lista;
         }

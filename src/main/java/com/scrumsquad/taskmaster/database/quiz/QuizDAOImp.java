@@ -31,7 +31,7 @@ public class QuizDAOImp implements QuizDAO {
                 }
             }
             preguntas.add(new PreguntaQuizDTO(rs.getInt("id"), rs.getString("pregunta"),
-                    nivel,opciones.get(0), opciones));
+                    nivel,opciones.get(0), opciones, rs.getString("pista")));
         }
         ps.close();
         rs.close();
