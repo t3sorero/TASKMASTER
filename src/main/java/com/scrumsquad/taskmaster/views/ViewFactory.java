@@ -7,6 +7,7 @@ import com.scrumsquad.taskmaster.views.student.StudentView;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.ConceptMatchingView;
 import com.scrumsquad.taskmaster.views.student.games.conceptmatching.TopicsConceptMatchingView;
 import com.scrumsquad.taskmaster.views.student.games.quiz.QuizView;
+import com.scrumsquad.taskmaster.views.student.games.quiz.WinnerView;
 import com.scrumsquad.taskmaster.views.student.teoria.TopicsTheoryView;
 import com.scrumsquad.taskmaster.views.student.teoria.TeoriaPorTemaView;
 
@@ -24,6 +25,7 @@ public class ViewFactory {
             case ViewRoutes.mainMenu -> new MainMenuView();
             case ViewRoutes.teoria -> new TeoriaPorTemaView();
             case ViewRoutes.quiz -> new QuizView();
+            case ViewRoutes.quizWinner -> new WinnerView();
             default -> null;
         };
     }

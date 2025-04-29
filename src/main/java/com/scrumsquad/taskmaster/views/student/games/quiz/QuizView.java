@@ -1,6 +1,7 @@
 package com.scrumsquad.taskmaster.views.student.games.quiz;
 
 import com.scrumsquad.taskmaster.controller.AppController;
+import com.scrumsquad.taskmaster.controller.Navigator;
 import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.quiz.PreguntaQuizDTO;
@@ -11,7 +12,6 @@ import com.scrumsquad.taskmaster.lib.View;
 import com.scrumsquad.taskmaster.lib.swing.GradientRoundedPanel;
 import com.scrumsquad.taskmaster.lib.swing.ImagePanel;
 import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
-import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.AppColors;
 import com.scrumsquad.taskmaster.views.ViewRoutes;
 
@@ -85,6 +85,33 @@ public class QuizView extends View {
         showProgresoPanel();
 
         return mainPanel;
+    }
+
+    //TODO quitar en version final
+    private JPanel createAuxPanel(String texto) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Layout vertical
+
+        JLabel titulo = new JLabel(texto);
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        titulo.setFont(new Font("Arial", Font.BOLD, 24));
+
+        JLabel subtitulo = new JLabel("vista provisional");
+        subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
+
+        panel.add(titulo);
+        panel.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio entre etiquetas
+        panel.add(subtitulo);
+
+        return panel;
+    }
+
+    private void goToWinnerPage() {
+        Navigator.getNavigator().to(ViewRoutes.quizWinner, args -> Navigator.getNavigator().back());
+    }
+    private void goToLoserPage() {
+        cardLayout.show(cardPanel, "perdiste");
     }
 
     private JPanel createErrorPanel(){
@@ -385,7 +412,7 @@ public class QuizView extends View {
                 if (enabled) {
                     enabled = false;
                     System.out.println("Se ha pulsado el boton" + i);
-                    responseMaded(i);
+                    responseMade(i);
                 }
             }
         });
@@ -393,7 +420,7 @@ public class QuizView extends View {
         return panel;
     }
 
-    private void responseMaded(int i) {
+    private void responseMade(int i) {
         respuestaButtons.get(correctQuestion).setColor(correctColor, correctColor);
         respuestaButtons.get(correctQuestion).repaint();
 
@@ -401,10 +428,8 @@ public class QuizView extends View {
         if (i != correctQuestion) { //respuesta incorrecta
             respuestaButtons.get(i).setColor(incorrectColor, incorrectColor);
             respuestaButtons.get(i).repaint();
-            timer = new Timer(2000, (e) -> {
-                progresoQuestions.get(currentQuestion).setBackground(incorrectColor);
-                cardLayout.show(cardPanel, "progreso");
-            });
+            timer = new Timer(2000, (e) -> goToLoserPage());
+            timer.setRepeats(false);
         }
         else if (currentQuestion != 4){ //respuesta correcta
             timer = new Timer(2000, (e) -> {
@@ -417,9 +442,8 @@ public class QuizView extends View {
             timer.setRepeats(false);
         }
         else { //juego terminado
-            timer = new Timer(10000, (e) -> {
-                AppController.getInstance().openFrame(ViewRoutes.quizWinner, "QuizScrum");
-            });
+            timer = new Timer(5000, (e) -> goToWinnerPage());
+            timer.setRepeats(false);
         }
         timer.setRepeats(false);
         timer.start();

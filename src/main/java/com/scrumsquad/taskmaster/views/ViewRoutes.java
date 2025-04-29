@@ -12,4 +12,5 @@ public class ViewRoutes {
     public static final String mainMenu = "/mainMenu";
     public static final String teoria = "/teoria";
     public static final String quiz = "/quiz";
+    public static final String quizWinner = "/quiz/winner";
 }
