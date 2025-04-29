@@ -18,11 +18,13 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.JPanel;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,8 +47,9 @@ class WinnerViewTest {
 
     @BeforeAll
     static void setupJavaFX() {
-        // Initialize JavaFX Toolkit
-        new JFXPanel();
+        // Omite los tests si no hay entorno gráfico (como GitHub Actions)
+        assumeFalse(GraphicsEnvironment.isHeadless(), "Test omitido en entorno headless");
+        new JFXPanel(); // Inicializa JavaFX Toolkit
     }
 
     @BeforeEach
