@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
 
-    private static final String firstRoute = ViewRoutes.quiz; // ViewRoutes.login;
+    private static final String firstRoute = ViewRoutes.login;
 
     private static final String[] imagesToPreload = {
             "/images/back-icon-white.png",

@@ -23,6 +23,9 @@ import java.util.List;
 
 public class QuizView extends View {
 
+    private static final int minWidth = 1400;
+    private static final int minHeight = 800;
+
     private static final String backgroundPath = "/images/quiz_background.jpg";
     private static final int totalQuestions = 5;
     private static final Color progresoRemainingColor = AppColors.secondaryLight;
@@ -49,9 +52,15 @@ public class QuizView extends View {
 
     private boolean enabled = true;
     private Timer timer;
+    private Dimension currentMinimumSize;
+    private JFrame frame;
 
     @Override
     public JPanel build(BuildOptions options) {
+        frame = options.frame();
+        currentMinimumSize = frame.getMinimumSize();
+        frame.setMinimumSize(new Dimension(minWidth, minHeight));
+        frame.setLocationRelativeTo(null);
         //llamada al comando
         Context ctx = new Context(CommandName.quizScrumGetData);
         AppController.getInstance().action(ctx);
@@ -67,7 +76,6 @@ public class QuizView extends View {
         cardPanel.add("error", createErrorPanel());
 
         mainPanel.add(cardPanel);
-
         return mainPanel;
     }
 
@@ -449,6 +457,8 @@ public class QuizView extends View {
             timer.stop();
         }
         timer = null;
+        frame.setMinimumSize(currentMinimumSize);
+        frame.setLocationRelativeTo(null);
     }
 
     @Override
