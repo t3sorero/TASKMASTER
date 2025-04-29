@@ -41,7 +41,6 @@ public class QuizView extends View {
     private JPanel pregunta;
     private JPanel pista;
     private java.util.List<GradientRoundedPanel> respuestaButtons = new ArrayList<>(4);
-    private JPanel comodinesPanel = null;
 
     private HashMap<Integer,PreguntaQuizDTO> preguntas;
     private int correctQuestion;
@@ -69,13 +68,6 @@ public class QuizView extends View {
         mainPanel.add(cardPanel);
 
         return mainPanel;
-    }
-
-    private void goToWinnerPage() {
-        Navigator.getNavigator().to(ViewRoutes.quizWinner, args -> Navigator.getNavigator().back());
-    }
-    private void goToLoserPage() {
-        cardLayout.show(cardPanel, "perdiste");
     }
 
     private JPanel createErrorPanel(){
@@ -289,7 +281,6 @@ public class QuizView extends View {
 
         comodines.setMaximumSize(new Dimension(pantalla.width / 4, pantalla.height / 20));
         comodines.setPreferredSize(new Dimension(pantalla.width / 4, pantalla.height / 20));
-        this.comodinesPanel = comodinesAux;
         return comodinesAux;
     }
 
@@ -376,7 +367,7 @@ public class QuizView extends View {
                 if (enabled) {
                     enabled = false;
                     System.out.println("Se ha pulsado el boton" + i);
-                    responseMade(i);
+                    responseMaded(i);
                 }
             }
         });
@@ -384,7 +375,7 @@ public class QuizView extends View {
         return panel;
     }
 
-    private void responseMade(int i) {
+    private void responseMaded(int i) {
         respuestaButtons.get(correctQuestion).setColor(correctColor, correctColor);
         respuestaButtons.get(correctQuestion).repaint();
 
@@ -392,23 +383,22 @@ public class QuizView extends View {
         if (i != correctQuestion) { //respuesta incorrecta
             respuestaButtons.get(i).setColor(incorrectColor, incorrectColor);
             respuestaButtons.get(i).repaint();
-            timer = new Timer(2000, (e) -> goToLoserPage());
             progresoQuestions.get(currentQuestion).setBackground(incorrectColor);
-            cardLayout.show(cardPanel, "progreso");
-            timer.setRepeats(false);
+            timer = new Timer (2000, (e) -> {
+                cardLayout.show(cardPanel, "progreso");
+            });
         }
         else if (currentQuestion != 4){ //respuesta correcta
             timer = new Timer(2000, (e) -> {
                 currentQuestion++;
                 updateQuestionPanel(currentQuestion*2);
                 showProgresoPanel();
-                //AppController.getInstance().openFrame(ViewRoutes.quizWinner, "QuizScrum");
             });
-            timer.setRepeats(false);
         }
         else { //juego terminado
-            timer = new Timer(5000, (e) -> goToWinnerPage());
-            timer.setRepeats(false);
+            timer = new Timer(5000, (e) -> {
+                Navigator.getNavigator().to(ViewRoutes.quizWinner, args -> Navigator.getNavigator().back());
+            });
         }
         timer.setRepeats(false);
         timer.start();
