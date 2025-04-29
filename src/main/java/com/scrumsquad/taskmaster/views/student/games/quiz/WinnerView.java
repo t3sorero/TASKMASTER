@@ -36,8 +36,8 @@ import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 
 import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
-import java.awt.BorderLayout;
 import java.util.Random;
 
 public class WinnerView extends View {
@@ -52,7 +52,9 @@ public class WinnerView extends View {
         panel.add(fxPanel, BorderLayout.CENTER);
 
         Platform.runLater(() -> {
-            double w = 800, h = 600;
+
+            Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
+            double w = pantalla.width, h = pantalla.height;
             Pane root = new Pane();
 
             // Fondo con degradado azul educativo
