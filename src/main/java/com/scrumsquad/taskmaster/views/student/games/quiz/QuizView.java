@@ -1,6 +1,7 @@
 package com.scrumsquad.taskmaster.views.student.games.quiz;
 
 import com.scrumsquad.taskmaster.controller.AppController;
+import com.scrumsquad.taskmaster.controller.Navigator;
 import com.scrumsquad.taskmaster.controller.commands.CommandName;
 import com.scrumsquad.taskmaster.controller.commands.Context;
 import com.scrumsquad.taskmaster.database.quiz.PreguntaQuizDTO;
@@ -11,8 +12,8 @@ import com.scrumsquad.taskmaster.lib.View;
 import com.scrumsquad.taskmaster.lib.swing.GradientRoundedPanel;
 import com.scrumsquad.taskmaster.lib.swing.ImagePanel;
 import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
-import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.AppColors;
+import com.scrumsquad.taskmaster.views.ViewRoutes;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -91,6 +92,13 @@ public class QuizView extends View {
         panel.add(subtitulo);
 
         return panel;
+    }
+
+    private void goToWinnerPage() {
+        Navigator.getNavigator().to(ViewRoutes.quizWinner, args -> Navigator.getNavigator().back());
+    }
+    private void goToLoserPage() {
+        cardLayout.show(cardPanel, "perdiste");
     }
 
     private JPanel createErrorPanel(){
@@ -391,7 +399,7 @@ public class QuizView extends View {
                 if (enabled) {
                     enabled = false;
                     System.out.println("Se ha pulsado el boton" + i);
-                    responseMaded(i);
+                    responseMade(i);
                 }
             }
         });
@@ -399,7 +407,7 @@ public class QuizView extends View {
         return panel;
     }
 
-    private void responseMaded(int i) {
+    private void responseMade(int i) {
         respuestaButtons.get(correctQuestion).setColor(correctColor, correctColor);
         respuestaButtons.get(correctQuestion).repaint();
 
@@ -407,9 +415,8 @@ public class QuizView extends View {
         if (i != correctQuestion) { //respuesta incorrecta
             respuestaButtons.get(i).setColor(incorrectColor, incorrectColor);
             respuestaButtons.get(i).repaint();
-            timer = new Timer(2000, (e) -> {
-                cardLayout.show(cardPanel, "perdiste");
-            });
+            timer = new Timer(2000, (e) -> goToLoserPage());
+            timer.setRepeats(false);
         }
         else if (currentQuestion != 4){ //respuesta correcta
             timer = new Timer(2000, (e) -> {
@@ -421,9 +428,8 @@ public class QuizView extends View {
 
         }
         else { //juego terminado
-            timer = new Timer(10000, (e) -> {
-                cardLayout.show(cardPanel, "ganaste");
-            });
+            timer = new Timer(5000, (e) -> goToWinnerPage());
+            timer.setRepeats(false);
         }
         timer.start();
     }

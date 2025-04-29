@@ -246,8 +246,10 @@ public class AppController {
                 }
                 revalidate();
                 repaint();
-                frame.views.peek().viewBuilt().revalidate();
-                frame.views.peek().viewBuilt().repaint();
+                if (!frame.views.isEmpty()) {
+                    frame.views.peek().viewBuilt().revalidate();
+                    frame.views.peek().viewBuilt().repaint();
+                }
             }
 
             public void pushView(JPanel panel) {
