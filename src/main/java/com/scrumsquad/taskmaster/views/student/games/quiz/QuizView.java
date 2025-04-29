@@ -13,6 +13,7 @@ import com.scrumsquad.taskmaster.lib.swing.ImagePanel;
 import com.scrumsquad.taskmaster.lib.swing.RoundedPanel;
 import com.scrumsquad.taskmaster.services.conceptmaching.ConceptosDefinicionesTOA;
 import com.scrumsquad.taskmaster.views.AppColors;
+import com.scrumsquad.taskmaster.views.ViewRoutes;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -51,10 +52,10 @@ public class QuizView extends View {
 
     @Override
     public JPanel build(BuildOptions options) {
-
+        /* //TODO descomentar y quitar lo de abajo
         //llamada al comando
         Context ctx = new Context(CommandName.quizScrumGetData);
-        AppController.getInstance().action(ctx);
+        AppController.getInstance().action(ctx);*/
 
         JPanel mainPanel = new ImagePanel(backgroundPath, ImagePanel.CENTER);
         mainPanel.setLayout(new GridLayout(1, 1));
@@ -65,32 +66,25 @@ public class QuizView extends View {
 
         cardPanel.add("progreso", createProgresoPanel());
         cardPanel.add("error", createErrorPanel());
-        cardPanel.add("ganaste", createAuxPanel("Ganaste")); //TODO quitar en la version final
-        cardPanel.add("perdiste", createAuxPanel("Perdiste")); //TODO quitar en la version final
 
         mainPanel.add(cardPanel);
 
+        //TODO quitar todo esto menos el return
+        this.preguntas = new HashMap<>();
+        preguntas.put(1, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(2, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(3, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(4, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(5, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(6, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(7, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(8, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(9, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        preguntas.put(10, new PreguntaQuizDTO(1, "pregunta", 1, "correcta", List.of("correcta", "incorrecta", "incorrecta", "incorrecta"), "pista"));
+        cardPanel.add("pregunta", createQuestionsPanel(currentQuestion*2));
+        showProgresoPanel();
+
         return mainPanel;
-    }
-
-    //TODO quitar en version final
-    private JPanel createAuxPanel(String texto) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS)); // Layout vertical
-
-        JLabel titulo = new JLabel(texto);
-        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        titulo.setFont(new Font("Arial", Font.BOLD, 24));
-
-        JLabel subtitulo = new JLabel("vista provisional");
-        subtitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        subtitulo.setFont(new Font("Arial", Font.PLAIN, 16));
-
-        panel.add(titulo);
-        panel.add(Box.createRigidArea(new Dimension(0, 10))); // Espacio entre etiquetas
-        panel.add(subtitulo);
-
-        return panel;
     }
 
     private JPanel createErrorPanel(){
@@ -182,12 +176,12 @@ public class QuizView extends View {
     private void updateQuestionPanel (int current){
         JLabel textoPregunta = (JLabel)pregunta.getComponents()[0];
         textoPregunta.setText(preguntas.get(current+1).getPregunta());
-        Collections.shuffle(preguntas.get(current+1).getOpciones());
+        //Collections.shuffle(preguntas.get(current+1).getOpciones()); TODO descomentar
 
         Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
         this.pista.setVisible(false);
         JLabel textoPista = (JLabel)pista.getComponents()[0];
-        textoPista.setText(preguntas.get(current).getPista());
+        textoPista.setText(preguntas.get(current+1).getPista());
         textoPista = (JLabel)pista.getComponents()[0];
         this.pista.setMaximumSize(new Dimension(textoPista.getPreferredSize().width+50, pantalla.height / 20));
         this.pista.setPreferredSize(new Dimension(textoPista.getPreferredSize().width+50, pantalla.height / 20));
@@ -244,7 +238,7 @@ public class QuizView extends View {
         //respuesta
         JPanel respuestas = new JPanel(new GridLayout(2, 2, 10, 10));
         respuestaButtons = new ArrayList<>();
-        Collections.shuffle(preguntas.get(current+1).getOpciones());
+        //Collections.shuffle(preguntas.get(current+1).getOpciones()); //TODO descomentar
         for (int i = 0; i < 4; i++) {
             respuestas.add(createResponse(i, current));
         }
@@ -408,23 +402,26 @@ public class QuizView extends View {
             respuestaButtons.get(i).setColor(incorrectColor, incorrectColor);
             respuestaButtons.get(i).repaint();
             timer = new Timer(2000, (e) -> {
-                cardLayout.show(cardPanel, "perdiste");
+                progresoQuestions.get(currentQuestion).setBackground(incorrectColor);
+                cardLayout.show(cardPanel, "progreso");
             });
         }
         else if (currentQuestion != 4){ //respuesta correcta
             timer = new Timer(2000, (e) -> {
-                currentQuestion++;
+                /*currentQuestion++;
                 updateQuestionPanel(currentQuestion*2);
-                showProgresoPanel();
+                showProgresoPanel();*/
+
+                AppController.getInstance().openFrame(ViewRoutes.quizWinner, "QuizScrum");
             });
             timer.setRepeats(false);
-
         }
         else { //juego terminado
             timer = new Timer(10000, (e) -> {
-                cardLayout.show(cardPanel, "ganaste");
+                AppController.getInstance().openFrame(ViewRoutes.quizWinner, "QuizScrum");
             });
         }
+        timer.setRepeats(false);
         timer.start();
     }
 
