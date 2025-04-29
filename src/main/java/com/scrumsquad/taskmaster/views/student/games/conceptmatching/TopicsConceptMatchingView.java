@@ -20,17 +20,15 @@ public class TopicsConceptMatchingView extends View {
     @Override
     public JPanel build(BuildOptions options) {
 
-        JPanel panelBotones = new JPanel(new GridLayout(4,1,40,40));
+        JPanel panelBotones = new JPanel(new GridLayout(3,1,40,40));
         panelBotones.setOpaque(false);
         Rounded3dButton button1 = createButton(1, "Equipos de trabajo");
         Rounded3dButton button2 = createButton(2, "Metodologías de Gestión de Proyectos");
         Rounded3dButton button3 = createButton(3, "Scrum");
-        Rounded3dButton button4 = createAllButton();
 
         panelBotones.add(button1);
         panelBotones.add(button2);
         panelBotones.add(button3);
-        panelBotones.add(button4);
 
         JPanel panelContenedor = new JPanel(new BorderLayout());
         panelContenedor.setBackground(AppColors.secondary40);
@@ -55,20 +53,6 @@ public class TopicsConceptMatchingView extends View {
             Map<String, Object> arguments = new HashMap<>();
             arguments.put("tema", tema);
             Navigator.getNavigator().to(ViewRoutes.conceptMatching, arguments);
-        });
-
-        return button;
-    }
-
-    private Rounded3dButton createAllButton(){
-        Rounded3dButton button = new Rounded3dButton("Todos los temas");
-        button.setLetterSpacing(2);
-        button.setFont(FontUtils.lato30);
-        button.setBackground(AppColors.background);
-        button.setForeground(AppColors.text);
-
-        button.addActionListener((e)->{
-            Navigator.getNavigator().to(ViewRoutes.quiz);
         });
 
         return button;
