@@ -10,9 +10,18 @@ import java.awt.image.BufferedImage;
 
 public class ImagePanel extends JPanel {
 
+    public static final int DEFAULT = 0;
+    public static final int CENTER = 1;
+
     private BufferedImage image;
+    private final int imagePosition;
 
     public ImagePanel(String path) {
+        this(path, 0);
+    }
+
+    public ImagePanel(String path, int imagePosition) {
+        this.imagePosition = imagePosition;
         setOpaque(false);
         image = ResourceLoader.loadImage(path);
         if (image != null && (image.getWidth() == 0 || image.getHeight() == 0)) {
@@ -40,8 +49,18 @@ public class ImagePanel extends JPanel {
                 imageWidth = (int) Math.floor(w);
             }
             AffineTransformOp op = SwingUtils.generateAffineTransformOp(image, imageWidth, imageHeight);
-            int x = (int) Math.floor(w - imageWidth);
-            int y = (int) Math.floor(h - imageHeight);
+            int x, y;
+            switch (imagePosition) {
+                case CENTER: {
+                    x = (int) Math.floor(w - imageWidth) / 2;
+                    y = (int) Math.floor(h - imageHeight) / 2;
+                    break;
+                }
+                default: {
+                    x = (int) Math.floor(w - imageWidth);
+                    y = (int) Math.floor(h - imageHeight);
+                }
+            }
             g2d.drawImage(image, op, x, y);
             g2d.dispose();
         }

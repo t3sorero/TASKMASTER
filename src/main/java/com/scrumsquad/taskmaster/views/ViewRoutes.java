@@ -13,4 +13,6 @@ public class ViewRoutes {
     public static final String teoria = "/teoria";
     public static final String practicalTest = "/practicalTest";
     public static final String gameSelection = "/gameSelection";
+    public static final String quiz = "/quiz";
+    public static final String quizWinner = "/quiz/winner";
 }

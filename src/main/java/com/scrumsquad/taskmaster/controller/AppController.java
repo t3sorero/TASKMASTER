@@ -106,13 +106,16 @@ public class AppController {
                 System.err.println("Views stack is empty");
                 return;
             }
-            JPanel viewBuilt = views.pop().viewBuilt();
-            framePanel.popView(viewBuilt);
+            RouteView routeView = views.pop();
+            routeView.view().onDispose();
+            framePanel.popView(routeView.viewBuilt());
         }
 
         public void clearViews() {
             if (views.isEmpty()) return;
-            views.clear();
+            while (!views.isEmpty()) {
+                views.pop().view().onDispose();
+            }
             framePanel.clearViews();
         }
 
@@ -243,8 +246,10 @@ public class AppController {
                 }
                 revalidate();
                 repaint();
-                frame.views.peek().viewBuilt().revalidate();
-                frame.views.peek().viewBuilt().repaint();
+                if (!frame.views.isEmpty()) {
+                    frame.views.peek().viewBuilt().revalidate();
+                    frame.views.peek().viewBuilt().repaint();
+                }
             }
 
             public void pushView(JPanel panel) {

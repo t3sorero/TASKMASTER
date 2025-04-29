@@ -24,6 +24,10 @@ public class CommandName {
     public static final String teoriaGetDataOk = "teoriaGetDataOk";
     public static final String teoriaGetDataKo = "teoriaGetDataKo";
 
+    public static final String quizScrumGetData = "quizScrumGetData";
+    public static final String quizScrumGetDataOk = "quizScrumGetDataOk";
+    public static final String quizScrumGetDataKo = "quizScrumGetDataKo";
+
     public static final String shortQuestionsGetData = "shortQuestionsGetData";
     public static final String shortQuestionsGetDataOK = "shortQuestionsGetDataOK";
     public static final String shortQuestionsGetDataKO = "shortQuestionsGetDataKO";

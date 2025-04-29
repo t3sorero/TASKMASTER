@@ -4,6 +4,8 @@ import com.scrumsquad.taskmaster.database.concepto.ConceptoDAO;
 import com.scrumsquad.taskmaster.database.concepto.ConceptoDAOImp;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDAO;
 import com.scrumsquad.taskmaster.database.definicion.DefinicionDAOImp;
+import com.scrumsquad.taskmaster.database.quiz.QuizDAO;
+import com.scrumsquad.taskmaster.database.quiz.QuizDAOImp;
 import com.scrumsquad.taskmaster.database.shortquestions.ShortQuestionsDAO;
 import com.scrumsquad.taskmaster.database.shortquestions.ShortQuestionsDAOImp;
 import com.scrumsquad.taskmaster.database.teoria.TeoriaDao;
@@ -26,6 +28,7 @@ public class DAOFactory {
     public static TeoriaDao getTeoriaDAO() { return new TeoriaDaoImp();}
     public static LoginDAO getLoginDAO() {return new LoginDAOImp();}
 
+    public static QuizDAO getQuizDAO() {return new QuizDAOImp();}
     public static ShortQuestionsDAO getShortQuestionsDAO(){return new ShortQuestionsDAOImp();}
 
 }
