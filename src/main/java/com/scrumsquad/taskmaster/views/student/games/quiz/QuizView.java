@@ -23,7 +23,7 @@ import java.util.List;
 
 public class QuizView extends View {
 
-    private static final int minWidth = 1400;
+    private static final int minWidth = 1500;
     private static final int minHeight = 800;
 
     private static final String backgroundPath = "/images/quiz_background.jpg";

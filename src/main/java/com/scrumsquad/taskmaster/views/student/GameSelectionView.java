@@ -23,9 +23,18 @@ public class GameSelectionView extends View {
         if (options != null && options.arguments().containsKey("tema")) {
             temaSeleccionado = (int) options.arguments().get("tema");
         }
+        int rows;
+        switch (temaSeleccionado) {
+            case 3: {
+                rows = 3;
+                break;
+            }
+            default: {
+                rows = 2;
+            }
+        }
 
-
-        JPanel panelBotones = new JPanel(new GridLayout(3, 1, 40, 40));
+        JPanel panelBotones = new JPanel(new GridLayout(rows, 1, 40, 40));
         panelBotones.setOpaque(false);
 
         // Botón juego de relacionar conceptos
@@ -62,7 +71,7 @@ public class GameSelectionView extends View {
             quizScrumBtn.addActionListener(e -> {
                 Map<String, Object> args = new HashMap<>();
                 args.put("tema", temaSeleccionado);
-                //Navigator.getNavigator().to(ViewRoutes.scrumQuiz, args);  PARA CUANDO ESTE
+                Navigator.getNavigator().to(ViewRoutes.quiz, args);
             });
             panelBotones.add(quizScrumBtn);
         }
