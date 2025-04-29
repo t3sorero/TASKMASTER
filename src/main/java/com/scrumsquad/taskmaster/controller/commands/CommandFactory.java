@@ -4,6 +4,8 @@ import com.scrumsquad.taskmaster.controller.commands.auth.RegisterCommand;
 import com.scrumsquad.taskmaster.controller.commands.conceptmatching.ConceptMatchingCheckAnswerCommand;
 import com.scrumsquad.taskmaster.controller.commands.conceptmatching.ConceptMatchingGetDataCommand;
 import com.scrumsquad.taskmaster.controller.commands.quizscrum.QuizGetDataCommand;
+import com.scrumsquad.taskmaster.controller.commands.shortquestions.ShortQuestionsCheckAnswersCommand;
+import com.scrumsquad.taskmaster.controller.commands.shortquestions.ShortQuestionsGetDataCommand;
 import com.scrumsquad.taskmaster.controller.commands.teoria.GetTeoriaCommand;
 import com.scrumsquad.taskmaster.controller.commands.login.StudentLoginCommand;
 
@@ -19,6 +21,8 @@ public class CommandFactory {
             case CommandName.conceptMatchingCheckAnswer -> new ConceptMatchingCheckAnswerCommand();
             case CommandName.teoriaGetData -> new GetTeoriaCommand();
             case CommandName.quizScrumGetData -> new QuizGetDataCommand();
+            case CommandName.shortQuestionsGetData -> new ShortQuestionsGetDataCommand();
+            case CommandName.shortQuestionsCheckAnswers -> new ShortQuestionsCheckAnswersCommand();
             default -> null;
         };
     }

@@ -1,6 +1,5 @@
 import com.scrumsquad.taskmaster.database.DAOFactory;
 import com.scrumsquad.taskmaster.database.login.LoginDAO;
-import com.scrumsquad.taskmaster.database.login.LoginDAOImp;
 import com.scrumsquad.taskmaster.lib.transactions.Transaction;
 import com.scrumsquad.taskmaster.lib.transactions.TransactionManager;
 import org.junit.jupiter.api.AfterEach;

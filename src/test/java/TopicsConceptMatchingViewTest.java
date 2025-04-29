@@ -1,6 +1,6 @@
 import com.scrumsquad.taskmaster.controller.Navigator;
 import com.scrumsquad.taskmaster.lib.Widget.BuildOptions;
-import com.scrumsquad.taskmaster.views.student.games.conceptmatching.TopicsConceptMatchingView;
+import com.scrumsquad.taskmaster.views.student.TopicsView;
 import com.scrumsquad.taskmaster.views.ViewRoutes;
 import com.scrumsquad.taskmaster.lib.swing.Rounded3dButton;
 import com.scrumsquad.taskmaster.views.AppColors;
@@ -18,11 +18,11 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 class TopicsConceptMatchingViewTest {
-    TopicsConceptMatchingView view;
+    TopicsView view;
 
     @BeforeEach
     void setUp() {
-        view = new TopicsConceptMatchingView();
+        view = new TopicsView();
     }
 
     private     BuildOptions dummyOptions() {
@@ -61,7 +61,7 @@ class TopicsConceptMatchingViewTest {
             JPanel panelBotones = (JPanel) panelContenedor.getComponent(0);
             Rounded3dButton btn = (Rounded3dButton) panelBotones.getComponent(0);
             btn.doClick();
-            verify(navigator).to((String) eq(ViewRoutes.conceptMatching), (Map<String, Object>) argThat(arg ->
+            verify(navigator).to((String) eq(ViewRoutes.gameSelection), (Map<String, Object>) argThat(arg ->
                     arg instanceof Map && ((Map<?, ?>) arg).get("tema").equals(1)
             ));
         }
