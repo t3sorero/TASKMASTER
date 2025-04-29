@@ -41,6 +41,7 @@ public class QuizView extends View {
     private JPanel pregunta;
     private JPanel pista;
     private java.util.List<GradientRoundedPanel> respuestaButtons = new ArrayList<>(4);
+    private JPanel reintentarButton;
 
     private HashMap<Integer,PreguntaQuizDTO> preguntas;
     private int correctQuestion;
@@ -90,7 +91,7 @@ public class QuizView extends View {
     private JPanel createProgresoPanel() {
         JPanel progresoPanel = new JPanel(new GridLayout(totalQuestions, 1, 16, 16));
         progresoPanel.setOpaque(false);
-        progresoPanel.setBorder(SwingUtils.emptyBorder(64));
+        //progresoPanel.setBorder(SwingUtils.emptyBorder(64));
         Stack<JPanel> stack = new Stack<>();
         for (int i = totalQuestions; i > 0; i--) {
             JPanel question = new RoundedPanel(4);
@@ -108,7 +109,36 @@ public class QuizView extends View {
         while (!stack.isEmpty()) {
             progresoQuestions.add(stack.pop());
         }
-        return progresoPanel;
+
+        Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
+        JPanel aux = new JPanel();
+        aux.setBorder(SwingUtils.emptyBorder(64));
+        aux.setLayout(new BoxLayout(aux, BoxLayout.Y_AXIS));
+        aux.setOpaque(false);
+        aux.add(progresoPanel);
+        aux.add(Box.createVerticalStrut(10));
+
+        GradientRoundedPanel reintentar = new GradientRoundedPanel(
+                preguntaColor1, preguntaColor2,
+                Color.white, 20);
+        reintentar.setLayout(new GridBagLayout());
+        JLabel texto = new JLabel("Reintentar");
+        texto.setForeground(Color.white);
+        texto.setFont(FontUtils.lato30);
+        reintentar.add(texto);
+        reintentar.setMaximumSize(new Dimension(Integer.MAX_VALUE, pantalla.height / 9));
+        reintentar.setPreferredSize(new Dimension(Integer.MAX_VALUE, pantalla.height / 9));
+        aux.add(reintentar, SwingUtils.verticalConstraints());
+        reintentar.setVisible(false);
+        reintentar.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent event) {
+                Navigator.getNavigator().to(ViewRoutes.quiz,args -> Navigator.getNavigator().back());
+            }
+        });;
+        this.reintentarButton = reintentar;
+
+        return aux;
     }
 
     private void showProgresoPanel() {
@@ -367,7 +397,7 @@ public class QuizView extends View {
                 if (enabled) {
                     enabled = false;
                     System.out.println("Se ha pulsado el boton" + i);
-                    responseMaded(i);
+                    responseMade(i);
                 }
             }
         });
@@ -375,7 +405,7 @@ public class QuizView extends View {
         return panel;
     }
 
-    private void responseMaded(int i) {
+    private void responseMade(int i) {
         respuestaButtons.get(correctQuestion).setColor(correctColor, correctColor);
         respuestaButtons.get(correctQuestion).repaint();
 
@@ -386,6 +416,9 @@ public class QuizView extends View {
             progresoQuestions.get(currentQuestion).setBackground(incorrectColor);
             timer = new Timer (2000, (e) -> {
                 cardLayout.show(cardPanel, "progreso");
+                this.reintentarButton.setVisible(true);
+                /*Navigator.getNavigator().to(ViewRoutes.quiz,
+                        args -> Navigator.getNavigator().back());*/
             });
         }
         else if (currentQuestion != 4){ //respuesta correcta
@@ -397,7 +430,8 @@ public class QuizView extends View {
         }
         else { //juego terminado
             timer = new Timer(5000, (e) -> {
-                Navigator.getNavigator().to(ViewRoutes.quizWinner, args -> Navigator.getNavigator().back());
+                Navigator.getNavigator().to(ViewRoutes.quizWinner,
+                        args -> Navigator.getNavigator().back());
             });
         }
         timer.setRepeats(false);
