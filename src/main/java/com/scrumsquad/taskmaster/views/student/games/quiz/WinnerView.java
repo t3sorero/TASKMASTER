@@ -41,9 +41,12 @@ import java.net.URL;
 import java.util.Random;
 
 public class WinnerView extends View {
-    private MediaPlayer player;
+    private MediaPlayer introPlayer;
+    private MediaPlayer winnerPlayer;
     private Timeline confettiTimeline;
     private Timeline pulseTimeline;
+    private double sceneWidth;
+    private double sceneHeight;
 
     @Override
     public JPanel build(BuildOptions options) {
@@ -52,111 +55,181 @@ public class WinnerView extends View {
         panel.add(fxPanel, BorderLayout.CENTER);
 
         Platform.runLater(() -> {
+            // We'll use a responsive design approach to handle resizing
+            sceneWidth = 800;
+            sceneHeight = 600;
 
-            Dimension pantalla = Toolkit.getDefaultToolkit().getScreenSize();
-            double w = pantalla.width, h = pantalla.height;
+            // Create a main container that will act as a responsive wrapper
+            StackPane mainContainer = new StackPane();
             Pane root = new Pane();
+            mainContainer.getChildren().add(root);
 
-            // Fondo con degradado azul educativo
-            Rectangle background = new Rectangle(0, 0, w, h);
+            // Set minimum size to preserve layout
+            mainContainer.setMinSize(sceneWidth, sceneHeight);
+
+            // Initial background
+            Rectangle background = new Rectangle(0, 0, sceneWidth, sceneHeight);
             background.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
-                    new Stop(0, Color.rgb(25, 118, 210)), // Azul educativo
+                    new Stop(0, Color.rgb(25, 118, 210)), // Educational blue
                     new Stop(1, Color.rgb(21, 101, 192))));
+
+            // Make the background responsive
+            background.widthProperty().bind(mainContainer.widthProperty());
+            background.heightProperty().bind(mainContainer.heightProperty());
             root.getChildren().add(background);
 
-            // Creamos las cortinas con textura y pliegues
-            createCurtains(root, w, h);
-
-            // Reproducir música de ganador
-            URL musicUrl = getClass().getResource("/audio/WinnerSound.mp3");
-            if (musicUrl != null) {
-                player = new MediaPlayer(new Media(musicUrl.toExternalForm()));
-                player.play();
+            // First, play intro music during the curtain animation
+            URL introMusicUrl = getClass().getResource("/audio/IntroSound.mp3");
+            if (introMusicUrl != null) {
+                introPlayer = new MediaPlayer(new Media(introMusicUrl.toExternalForm()));
+                introPlayer.play();
             } else {
-                System.err.println("Error: No se pudo encontrar el archivo de audio WinnerSound.mp3");
+                System.err.println("Error: Could not find the audio file IntroSound.mp3");
             }
 
-            fxPanel.setScene(new Scene(root, w, h));
+            // Create responsive curtains
+            createResponsiveCurtains(root, mainContainer);
+
+            // Create the scene with the responsive container
+            Scene scene = new Scene(mainContainer, sceneWidth, sceneHeight);
+
+            // Make the scene respond to size changes
+            scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+                sceneWidth = newVal.doubleValue();
+                adjustLayout(root);
+            });
+
+            scene.heightProperty().addListener((obs, oldVal, newVal) -> {
+                sceneHeight = newVal.doubleValue();
+                adjustLayout(root);
+            });
+
+            fxPanel.setScene(scene);
         });
 
         return panel;
     }
 
-    private void createCurtains(Pane root, double w, double h) {
-        // Creamos múltiples pliegues para cada cortina para dar efecto más realista
+    private void adjustLayout(Pane root) {
+        // This method would contain any specific adjustments needed for resizing
+        // Most of our components will use relative positioning through property bindings
+    }
+
+    private void createResponsiveCurtains(Pane root, StackPane container) {
+        // Create responsive curtains that scale with the window
         int numFolds = 8;
-        double foldWidth = w / (numFolds * 2);
 
-        // Colores para las cortinas: rojo brillante didáctico
-        Color curtainColor = Color.rgb(220, 53, 69); // Rojo vibrante
-        Color curtainShadow = Color.rgb(187, 45, 59); // Sombra para los pliegues
+        // Colors for curtains: bright educational red
+        Color curtainColor = Color.rgb(220, 53, 69); // Vibrant red
+        Color curtainShadow = Color.rgb(187, 45, 59); // Shadow for folds
 
-        // Contenedores para las cortinas
+        // Containers for curtains
         Pane leftCurtainPane = new Pane();
         Pane rightCurtainPane = new Pane();
 
-        // Creamos los pliegues de las cortinas
+        // Make sure curtains resize with the container
+        leftCurtainPane.prefWidthProperty().bind(container.widthProperty().divide(2));
+        leftCurtainPane.prefHeightProperty().bind(container.heightProperty());
+        rightCurtainPane.prefWidthProperty().bind(container.widthProperty().divide(2));
+        rightCurtainPane.prefHeightProperty().bind(container.heightProperty());
+
+        // Create the curtain folds that resize with the parent pane
         for (int i = 0; i < numFolds; i++) {
-            // Pliegue izquierdo
-            Rectangle leftFold = new Rectangle(i * foldWidth, 0, foldWidth, h);
+            final int foldIndex = i;  // Need final for lambda
+
+            // Left fold
+            Rectangle leftFold = new Rectangle();
+            leftFold.widthProperty().bind(leftCurtainPane.prefWidthProperty().divide(numFolds));
+            leftFold.heightProperty().bind(leftCurtainPane.prefHeightProperty());
+            leftFold.xProperty().bind(leftFold.widthProperty().multiply(foldIndex));
             leftFold.setFill(i % 2 == 0 ? curtainColor : curtainShadow);
             leftCurtainPane.getChildren().add(leftFold);
 
-            // Pliegue derecho
-            Rectangle rightFold = new Rectangle(i * foldWidth, 0, foldWidth, h);
+            // Right fold
+            Rectangle rightFold = new Rectangle();
+            rightFold.widthProperty().bind(rightCurtainPane.prefWidthProperty().divide(numFolds));
+            rightFold.heightProperty().bind(rightCurtainPane.prefHeightProperty());
+            rightFold.xProperty().bind(rightFold.widthProperty().multiply(foldIndex));
             rightFold.setFill(i % 2 == 0 ? curtainColor : curtainShadow);
             rightCurtainPane.getChildren().add(rightFold);
         }
 
-        // Posicionamos las cortinas
+        // Position curtains
         leftCurtainPane.setLayoutX(0);
-        rightCurtainPane.setLayoutX(w / 2);
+        rightCurtainPane.layoutXProperty().bind(container.widthProperty().divide(2));
 
-        // Añadimos las cortinas al root
+        // Add curtains to root
         root.getChildren().addAll(leftCurtainPane, rightCurtainPane);
 
-        // Animación para abrir las cortinas
+        // Animation to open curtains
         TranslateTransition leftAnim = new TranslateTransition(Duration.seconds(2.5), leftCurtainPane);
-        leftAnim.setByX(-w/2);
+        leftAnim.toXProperty().bind(container.widthProperty().divide(2).negate());
 
         TranslateTransition rightAnim = new TranslateTransition(Duration.seconds(2.5), rightCurtainPane);
-        rightAnim.setByX(w/2);
+        rightAnim.toXProperty().bind(container.widthProperty().divide(2));
 
-        // Crear una animación paralela para las cortinas
+        // Create a parallel animation for the curtains
         ParallelTransition openCurtains = new ParallelTransition(leftAnim, rightAnim);
         openCurtains.setOnFinished(e -> {
-            // IMPORTANTE: Aquí creamos el panel de celebración DESPUÉS de que se abran las cortinas
-            createCelebrationPanel(root, w, h);
-            startConfettiAnimation(root, w, h);
+            // IMPORTANT: Stop intro music and start winner music when curtains are open
+            if (introPlayer != null) {
+                introPlayer.stop();
+                introPlayer.dispose();
+            }
+
+            // Now play the winner music
+            URL winnerMusicUrl = getClass().getResource("/audio/WinnerSound.mp3");
+            if (winnerMusicUrl != null) {
+                winnerPlayer = new MediaPlayer(new Media(winnerMusicUrl.toExternalForm()));
+                winnerPlayer.play();
+            } else {
+                System.err.println("Error: Could not find the audio file WinnerSound.mp3");
+            }
+
+            // IMPORTANT: create celebration panel AFTER curtains open
+            createCelebrationPanel(root, container);
+            startConfettiAnimation(root, container);
         });
 
-        // Retrasamos un poco la apertura de las cortinas para dar un efecto más teatral
+        // Delay curtain opening for a more theatrical effect
         Timeline delay = new Timeline(new KeyFrame(Duration.seconds(1), e -> openCurtains.play()));
         delay.play();
     }
 
-    private void createCelebrationPanel(Pane root, double w, double h) {
-        // Creamos el panel de celebración (solo después de que las cortinas se abren)
-        Rectangle stage = new Rectangle(50, 50, w - 100, h - 100);
+    private void createCelebrationPanel(Pane root, StackPane container) {
+        // Create responsive celebration panel
+        Rectangle stage = new Rectangle();
+        stage.xProperty().bind(container.widthProperty().multiply(0.0625)); // 50/800 = 0.0625
+        stage.yProperty().bind(container.heightProperty().multiply(0.0833)); // 50/600 = 0.0833
+        stage.widthProperty().bind(container.widthProperty().multiply(0.875)); // (800-100)/800 = 0.875
+        stage.heightProperty().bind(container.heightProperty().multiply(0.8333)); // (600-100)/600 = 0.8333
         stage.setFill(Color.rgb(245, 245, 245));
         stage.setArcWidth(20);
         stage.setArcHeight(20);
         stage.setEffect(new DropShadow(20, Color.rgb(0, 0, 0, 0.5)));
-        stage.setOpacity(0); // Empezamos con opacidad 0 para animarlo
+        stage.setOpacity(0); // Start with opacity 0 for animation
 
-        // Bordes dorados mejorados para la parte superior e inferior
-        Rectangle topBorder = new Rectangle(50, 50, w - 100, 15);
-        topBorder.setFill(Color.rgb(255, 215, 0)); // Dorado
+        // Enhanced gold borders for top and bottom
+        Rectangle topBorder = new Rectangle();
+        topBorder.xProperty().bind(stage.xProperty());
+        topBorder.yProperty().bind(stage.yProperty());
+        topBorder.widthProperty().bind(stage.widthProperty());
+        topBorder.heightProperty().bind(container.heightProperty().multiply(0.025)); // 15/600 = 0.025
+        topBorder.setFill(Color.rgb(255, 215, 0)); // Gold
         topBorder.setOpacity(0);
 
-        Rectangle bottomBorder = new Rectangle(50, h - 65, w - 100, 15);
-        bottomBorder.setFill(Color.rgb(255, 215, 0)); // Dorado
+        Rectangle bottomBorder = new Rectangle();
+        bottomBorder.xProperty().bind(stage.xProperty());
+        bottomBorder.yProperty().bind(container.heightProperty().subtract(topBorder.heightProperty().add(stage.yProperty())));
+        bottomBorder.widthProperty().bind(stage.widthProperty());
+        bottomBorder.heightProperty().bind(topBorder.heightProperty());
+        bottomBorder.setFill(Color.rgb(255, 215, 0)); // Gold
         bottomBorder.setOpacity(0);
 
-        // Añadimos el panel al root
+        // Add panel to root
         root.getChildren().addAll(stage, topBorder, bottomBorder);
 
-        // Animamos la aparición del panel y los bordes
+        // Animate panel appearance
         Timeline fadeInPanel = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(stage.opacityProperty(), 0),
@@ -169,91 +242,90 @@ public class WinnerView extends View {
         );
 
         fadeInPanel.setOnFinished(e -> {
-            // Después de que aparezca el panel, mostramos el mensaje y el trofeo
-            showCongratulationsMessage(root, w, h);
+            // After panel appears, show congratulations message and trophy
+            showCongratulationsMessage(root, container);
         });
 
         fadeInPanel.play();
     }
 
-    private void showCongratulationsMessage(Pane root, double w, double h) {
-        // Creamos un trofeo personalizado mejorado
+    private void showCongratulationsMessage(Pane root, StackPane container) {
+        // Create improved trophy
         Pane trophyPane = createImprovedTrophy();
         trophyPane.setScaleX(1.3);
         trophyPane.setScaleY(1.3);
-        trophyPane.setLayoutX((w - 120) / 2);  // Centrado, ajustando por escala
-        trophyPane.setLayoutY(h/2 - 240);      // Colocado en la parte superior
-        trophyPane.setOpacity(0); // Inicialmente invisible para animarlo
 
-        // Añadimos un efecto de brillo
+        // Position trophy responsively
+        trophyPane.layoutXProperty().bind(container.widthProperty().divide(2).subtract(60)); // Centered, adjusted for scale
+        trophyPane.layoutYProperty().bind(container.heightProperty().multiply(0.5).subtract(240)); // Upper part of screen
+        trophyPane.setOpacity(0); // Initially invisible for animation
+
+        // Add glow effect
         Glow glow = new Glow();
         glow.setLevel(0.6);
 
-        // Aplicamos un efecto de sombra proyectada para más profundidad
+        // Add drop shadow for depth
         DropShadow dropShadow = new DropShadow();
         dropShadow.setColor(Color.GOLD);
         dropShadow.setRadius(30);
         dropShadow.setSpread(0.5);
 
-        // Combinamos los efectos
+        // Combine effects
         glow.setInput(dropShadow);
         trophyPane.setEffect(glow);
 
         root.getChildren().add(trophyPane);
 
-        // Mensaje principal con estilo didáctico y motivador
+        // Main message with educational style
         Text msg = new Text("¡Enhorabuena!");
         msg.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-        msg.setFill(Color.rgb(33, 150, 243)); // Azul brillante
+        msg.setFill(Color.rgb(33, 150, 243)); // Bright blue
 
-        // Calculamos el ancho del texto correctamente antes de posicionarlo
-        double msgWidth = computeTextWidth(msg.getText(), msg.getFont());
-        msg.setX((w - msgWidth) / 2);
-        msg.setY(h/2 + 30);
+        // Position text responsively
+        msg.xProperty().bind(container.widthProperty().divide(2).subtract(computeTextWidth(msg.getText(), msg.getFont())/2));
+        msg.yProperty().bind(container.heightProperty().multiply(0.5).add(30));
 
-        // Efecto de sombra para el texto
+        // Add shadow effect for text
         DropShadow shadow = new DropShadow();
         shadow.setColor(Color.rgb(0, 0, 0, 0.5));
         shadow.setOffsetX(3);
         shadow.setOffsetY(3);
         msg.setEffect(shadow);
 
-        // Mensaje secundario
+        // Secondary message
         Text subtitle = new Text("Eres ya un SCRUM MASTER");
         subtitle.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        subtitle.setFill(Color.rgb(76, 175, 80)); // Verde didáctico
+        subtitle.setFill(Color.rgb(76, 175, 80)); // Educational green
 
-        // Calculamos el ancho del texto correctamente antes de posicionarlo
-        double subtitleWidth = computeTextWidth(subtitle.getText(), subtitle.getFont());
-        subtitle.setX((w - subtitleWidth) / 2);
-        subtitle.setY(h/2 + 80);
+        // Position subtitle responsively
+        subtitle.xProperty().bind(container.widthProperty().divide(2).subtract(computeTextWidth(subtitle.getText(), subtitle.getFont())/2));
+        subtitle.yProperty().bind(container.heightProperty().multiply(0.5).add(80));
         subtitle.setEffect(shadow);
 
-        // Animación para el mensaje
+        // Set initial opacity for animation
         msg.setOpacity(0);
         subtitle.setOpacity(0);
 
-        // 1. Entrada del trofeo con efecto de aparición y rebote suave
+        // 1. Trophy entrance with fade and bounce effect
         FadeTransition fadeInTrophy = new FadeTransition(Duration.seconds(1), trophyPane);
         fadeInTrophy.setFromValue(0);
         fadeInTrophy.setToValue(1);
 
-        // Añadimos un pequeño rebote al trofeo
+        // Add a gentle bounce to the trophy
         TranslateTransition trophyBounce = new TranslateTransition(Duration.seconds(1), trophyPane);
         trophyBounce.setFromY(-50);
         trophyBounce.setToY(0);
 
-        // 2. Eliminamos la rotación 3D completa que causaba problemas visuales
-        // Reemplazamos con una rotación suave y limitada para mantener un efecto sutil
+        // 2. Replace full 3D rotation with gentle rotation
         RotateTransition rotateY = new RotateTransition(Duration.seconds(4), trophyPane);
         rotateY.setAxis(Rotate.Y_AXIS);
-        // Rotación limitada de solo 15 grados en cada dirección
+        // Limited rotation of only 15 degrees in each direction
         rotateY.setFromAngle(-15);
         rotateY.setToAngle(15);
         rotateY.setCycleCount(Timeline.INDEFINITE);
         rotateY.setAutoReverse(true);
 
-        // 3. Efecto de pulso para hacer más notoria la animación
+        // 3. Pulse effect to enhance animation
         pulseTimeline = new Timeline(
                 new KeyFrame(Duration.ZERO, new KeyValue(glow.levelProperty(), 0.6)),
                 new KeyFrame(Duration.seconds(1), new KeyValue(glow.levelProperty(), 0.3)),
@@ -261,7 +333,7 @@ public class WinnerView extends View {
         );
         pulseTimeline.setCycleCount(Timeline.INDEFINITE);
 
-        // Reproducimos todas las animaciones del trofeo
+        // Play all trophy animations
         ParallelTransition trophyEntrance = new ParallelTransition(fadeInTrophy, trophyBounce);
         trophyEntrance.play();
 
@@ -270,7 +342,7 @@ public class WinnerView extends View {
             pulseTimeline.play();
         });
 
-        // Animación para el mensaje de texto
+        // Text animation
         Timeline fadeInText = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(msg.opacityProperty(), 0),
@@ -286,26 +358,25 @@ public class WinnerView extends View {
         fadeInText.play();
     }
 
-    // Método auxiliar para calcular el ancho real del texto
+    // Helper method to calculate actual text width
     private double computeTextWidth(String text, Font font) {
         Text helper = new Text(text);
         helper.setFont(font);
         return helper.getLayoutBounds().getWidth();
     }
 
-    // Método para crear un trofeo mejorado con menos problemas de renderizado
+    // Method to create improved trophy with better rendering
     private Pane createImprovedTrophy() {
         Pane trophyPane = new Pane();
         trophyPane.setPrefSize(100, 200);
 
-        // Colores del trofeo
+        // Trophy colors
         Color goldColor = Color.rgb(255, 215, 0);
         Color goldShadow = Color.rgb(218, 165, 32);
         Color goldHighlight = Color.rgb(255, 235, 100);
-        Color redColor = Color.rgb(220, 20, 20);
         Color blackBase = Color.rgb(20, 20, 20);
 
-        // Base negra del trofeo (más detallada)
+        // Black trophy base (more detailed)
         Rectangle baseBottom = new Rectangle(5, 170, 90, 15);
         baseBottom.setFill(blackBase);
         baseBottom.setArcWidth(5);
@@ -321,22 +392,22 @@ public class WinnerView extends View {
         baseTop.setArcWidth(5);
         baseTop.setArcHeight(5);
 
-        // Tallo dorado del trofeo (con gradiente para mejor efecto 3D)
+        // Golden stem with gradient for 3D effect
         Rectangle stem = new Rectangle(45, 90, 10, 50);
         stem.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
                 new Stop(0, goldShadow),
                 new Stop(0.5, goldColor),
                 new Stop(1, goldShadow)));
 
-        // Copa del trofeo con mejor detalle
-        // Parte inferior de la copa
+        // Trophy cup with better detail
+        // Bottom part of cup
         Ellipse cupBottom = new Ellipse(50, 90, 25, 8);
         cupBottom.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
                 new Stop(0, goldShadow),
                 new Stop(0.5, goldColor),
                 new Stop(1, goldHighlight)));
 
-        // Laterales y centro de la copa (más definidos)
+        // Cup sides and center (more defined)
         Rectangle cupLeft = new Rectangle(25, 35, 5, 55);
         cupLeft.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
                 new Stop(0, goldShadow),
@@ -353,43 +424,41 @@ public class WinnerView extends View {
                 new Stop(0.5, goldColor),
                 new Stop(1, goldShadow)));
 
-        // Parte superior de la copa (redondeada)
+        // Rounded top of cup
         Ellipse cupTop = new Ellipse(50, 35, 25, 8);
         cupTop.setFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE,
                 new Stop(0, goldHighlight),
                 new Stop(0.5, goldColor),
                 new Stop(1, goldShadow)));
 
-        // Asas del trofeo (más definidas y con efecto 3D)
-        // Asa izquierda
+        // Trophy handles (more defined with 3D effect)
+        // Left handle
         Ellipse handleLeftOuter = new Ellipse(15, 60, 10, 25);
         handleLeftOuter.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
                 new Stop(0, goldShadow),
                 new Stop(1, goldColor)));
 
         Ellipse handleLeftInner = new Ellipse(15, 60, 5, 20);
-        handleLeftInner.setFill(Color.rgb(245, 245, 245)); // Fondo que simula hueco
+        handleLeftInner.setFill(Color.rgb(245, 245, 245)); // Background to simulate hole
 
-        // Asa derecha
+        // Right handle
         Ellipse handleRightOuter = new Ellipse(85, 60, 10, 25);
         handleRightOuter.setFill(new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
                 new Stop(0, goldColor),
                 new Stop(1, goldShadow)));
 
         Ellipse handleRightInner = new Ellipse(85, 60, 5, 20);
-        handleRightInner.setFill(Color.rgb(245, 245, 245)); // Fondo que simula hueco
+        handleRightInner.setFill(Color.rgb(245, 245, 245)); // Background to simulate hole
 
-        // Creamos un StackPane para agrupar el círculo rojo y el número
-        // El círculo tendrá un radio de 18, por lo que el StackPane tendrá un diámetro de 36
-        // Queremos que el centro se ubique en (50,55) => posición (50-18, 55-18)
+        // Create StackPane for red circle and number
         StackPane redCirclePane = new StackPane();
         redCirclePane.setLayoutX(50 - 18);
         redCirclePane.setLayoutY(55 - 18);
         redCirclePane.setPrefSize(36, 36);
 
-        // Círculo rojo central ajustado para el StackPane (usando coordenadas relativas)
+        // Red circle adjusted for StackPane (using relative coordinates)
         Circle redCircleBg = new Circle(18, 18, 18);
-        redCircleBg.setFill(Color.rgb(240, 30, 30)); // Base roja más oscura
+        redCircleBg.setFill(Color.rgb(240, 30, 30)); // Darker red base
 
         Circle redCircle = new Circle(18, 18, 16);
         redCircle.setFill(new RadialGradient(0, 0, 0.3, 0.3, 0.7, true, CycleMethod.NO_CYCLE,
@@ -402,49 +471,49 @@ public class WinnerView extends View {
         redCircleBorder.setStroke(goldColor);
         redCircleBorder.setStrokeWidth(2);
 
-        // Texto que representa el número "1"
+        // Number "1" text
         Text numberOne = new Text("1");
         numberOne.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         numberOne.setFill(Color.WHITE);
-        StackPane.setAlignment(numberOne, Pos.CENTER);  // Centramos el texto
+        StackPane.setAlignment(numberOne, Pos.CENTER);  // Center the text
 
-        // Se añaden los nodos al contenedor. Gracias al StackPane, el número quedará centrado.
+        // Add nodes to container. With StackPane, number will be centered.
         redCirclePane.getChildren().addAll(redCircleBg, redCircle, redCircleBorder, numberOne);
 
-        // Aplicamos efectos de iluminación más sutiles
+        // Apply subtle lighting effects
         Light.Distant light = new Light.Distant();
         light.setAzimuth(-135.0);
         light.setElevation(30.0);
 
         Lighting lighting = new Lighting();
         lighting.setLight(light);
-        lighting.setSurfaceScale(3.0); // Efecto sutil
+        lighting.setSurfaceScale(3.0); // Subtle effect
 
         cupMiddle.setEffect(lighting);
 
-        // Se añaden todos los componentes al Pane principal en orden para la correcta superposición
+        // Add all components to main Pane in order for correct overlapping
         trophyPane.getChildren().addAll(
                 baseBottom, baseMiddle, baseTop,
                 stem, cupBottom,
                 handleLeftOuter, handleLeftInner,
                 handleRightOuter, handleRightInner,
                 cupLeft, cupRight, cupMiddle, cupTop,
-                redCirclePane  // Usamos el StackPane que ya contiene el círculo y el número
+                redCirclePane  // Use the StackPane containing circle and number
         );
 
         return trophyPane;
     }
 
-    private void startConfettiAnimation(Pane root, double width, double height) {
+    private void startConfettiAnimation(Pane root, StackPane container) {
         Random random = new Random();
         confettiTimeline = new Timeline(
                 new KeyFrame(Duration.millis(50), event -> {
                     for (int i = 0; i < 5; i++) {
-                        // Crear confeti de diferentes formas y colores educativos
+                        // Create confetti of different shapes and educational colors
                         double size = 5 + random.nextDouble() * 10;
                         javafx.scene.Node confetti;
 
-                        // Alternamos entre círculos y rectángulos
+                        // Alternate between circles and rectangles
                         if (random.nextBoolean()) {
                             confetti = new Circle(size);
                             ((Circle) confetti).setFill(getRandomEducationalColor());
@@ -454,18 +523,18 @@ public class WinnerView extends View {
                             ((Rectangle) confetti).setRotate(random.nextDouble() * 360);
                         }
 
-                        // Posición inicial
-                        confetti.setLayoutX(random.nextDouble() * width);
+                        // Initial position - spread across the whole width
+                        confetti.setLayoutX(random.nextDouble() * container.getWidth());
                         confetti.setLayoutY(-10);
 
                         root.getChildren().add(confetti);
 
-                        // Animación más realista con rotación
+                        // More realistic animation with rotation
                         TranslateTransition fall = new TranslateTransition(
                                 Duration.seconds(2 + random.nextDouble() * 3), confetti);
-                        fall.setByY(height + 20);
+                        fall.byYProperty().bind(container.heightProperty().add(20));
 
-                        // Movimiento oscilante en X para simular caída real
+                        // Oscillating X movement to simulate real falling
                         double amplitude = (random.nextDouble() - 0.5) * 200;
                         Timeline oscillate = new Timeline(
                                 new KeyFrame(Duration.ZERO,
@@ -481,18 +550,18 @@ public class WinnerView extends View {
                         );
                         oscillate.setCycleCount(Timeline.INDEFINITE);
 
-                        // Rotación
+                        // Rotation
                         RotateTransition rotate = new RotateTransition(
                                 Duration.seconds(random.nextDouble() * 2 + 1), confetti);
                         rotate.setByAngle(360);
                         rotate.setCycleCount(Timeline.INDEFINITE);
 
-                        // Iniciamos las animaciones
+                        // Start animations
                         fall.play();
                         oscillate.play();
                         rotate.play();
 
-                        // Removemos el confeti cuando termina de caer
+                        // Remove confetti when done falling
                         fall.setOnFinished(e -> {
                             oscillate.stop();
                             rotate.stop();
@@ -507,16 +576,16 @@ public class WinnerView extends View {
 
     private Color getRandomEducationalColor() {
         Random random = new Random();
-        // Colores educativos vibrantes
+        // Vibrant educational colors
         Color[] colors = {
-                Color.rgb(33, 150, 243),  // Azul primario
-                Color.rgb(76, 175, 80),   // Verde éxito
-                Color.rgb(255, 193, 7),   // Amarillo atención
-                Color.rgb(156, 39, 176),  // Púrpura creatividad
-                Color.rgb(244, 67, 54),   // Rojo energía
-                Color.rgb(0, 188, 212),   // Cian información
-                Color.rgb(255, 152, 0),   // Naranja motivación
-                Color.rgb(233, 30, 99)    // Rosa diversión
+                Color.rgb(33, 150, 243),  // Primary blue
+                Color.rgb(76, 175, 80),   // Success green
+                Color.rgb(255, 193, 7),   // Warning yellow
+                Color.rgb(156, 39, 176),  // Creative purple
+                Color.rgb(244, 67, 54),   // Energy red
+                Color.rgb(0, 188, 212),   // Info cyan
+                Color.rgb(255, 152, 0),   // Motivation orange
+                Color.rgb(233, 30, 99)    // Fun pink
         };
         return colors[random.nextInt(colors.length)];
     }
@@ -526,11 +595,15 @@ public class WinnerView extends View {
 
     @Override
     public void onDispose() {
-        // Detener la reproducción de música y las animaciones al salir de la vista
+        // Stop music playback and animations when leaving the view
         Platform.runLater(() -> {
-            if (player != null) {
-                player.stop();
-                player.dispose();
+            if (introPlayer != null) {
+                introPlayer.stop();
+                introPlayer.dispose();
+            }
+            if (winnerPlayer != null) {
+                winnerPlayer.stop();
+                winnerPlayer.dispose();
             }
             if (confettiTimeline != null) {
                 confettiTimeline.stop();
