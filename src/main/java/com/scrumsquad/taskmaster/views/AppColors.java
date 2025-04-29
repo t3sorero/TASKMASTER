@@ -6,6 +6,8 @@ import com.scrumsquad.taskmaster.lib.SwingUtils;
 import java.awt.*;
 
 public class AppColors {
+    public static Color secondaryDark;
+
     private AppColors() {
     }
 

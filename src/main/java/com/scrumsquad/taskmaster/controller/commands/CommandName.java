@@ -24,4 +24,12 @@ public class CommandName {
     public static final String teoriaGetDataOk = "teoriaGetDataOk";
     public static final String teoriaGetDataKo = "teoriaGetDataKo";
 
+    public static final String shortQuestionsGetData = "shortQuestionsGetData";
+    public static final String shortQuestionsGetDataOK = "shortQuestionsGetDataOK";
+    public static final String shortQuestionsGetDataKO = "shortQuestionsGetDataKO";
+
+    public static final String shortQuestionsCheckAnswers = "shortQuestionsCheckAnswers";
+    public static final String shortQuestionsCheckAnswersOK = "shortQuestionsCheckAnswersOK";
+    public static final String shortQuestionsCheckAnswersKO = "shortQuestionsCheckAnswersKO";
+
 }

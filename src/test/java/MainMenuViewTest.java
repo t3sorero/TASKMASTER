@@ -38,7 +38,7 @@ class MainMenuViewTest {
         String texto = TestUtils.getPrivateField(teoriaButton, "bottomText", String.class);
         assertEquals("TEORÍA", texto);
         texto = TestUtils.getPrivateField(practicarButton, "bottomText", String.class);
-        assertEquals("PRACTICAR", texto);
+        assertEquals("PRÁCTICA", texto);
     }
 
     @Test

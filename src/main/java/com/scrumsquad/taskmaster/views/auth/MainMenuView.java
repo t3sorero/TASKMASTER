@@ -45,7 +45,7 @@ public class MainMenuView extends View {
         });
         JButton practicarButton = createStyledButton("PRÁCTICA", new Color(255, 150, 120), "/images/ejercicios.png");
         practicarButton.addActionListener(e -> {
-            Navigator.getNavigator().to(ViewRoutes.topicsConceptMatching);
+            Navigator.getNavigator().to(ViewRoutes.topics);
         });        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 0));
 
         buttonPanel.add(teoriaButton);
